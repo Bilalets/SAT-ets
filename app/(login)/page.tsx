@@ -73,7 +73,7 @@ const onSubmit: SubmitHandler<FormValues> = async (data) => {
 
   signIn('credentials', {
     ...data,
-    redirect: false,
+    redirect: true,
   })
     .then((callback) => {
       if (callback?.error) {
@@ -82,6 +82,7 @@ const onSubmit: SubmitHandler<FormValues> = async (data) => {
             ? 'Please verify your email first'
             : 'Invalid username or password';
         toast.error(errorMessage);
+        console.log(data)
         setLoading(false);
       } else if (callback?.ok && !callback.error) {
         router.replace('/applicants/home');
