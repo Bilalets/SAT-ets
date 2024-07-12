@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  superAdmin
+  admin
+  applicant
+}
+
+enum Level {
+  easy
+  medium
+  hard
+}
+
+model User {
+  id                String       @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  fatherName        String
+  city              String
+  phoneNumber       String
+  dateofBirth       DateTime
+  email             String       @unique
+  emailVerified     Boolean      @default(false)
+  verificationToken String?
+  resetToken        String?
+  emailTokenExpiry  DateTime?
+  password          String
+  role              Role
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  saverecords       SaveRecord[]
+}
+
+model SaveRecord {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  Percentage  String
+  Correctawn  String
+  Wrongawn    String
+  subjectname String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?  @db.ObjectId
+}
+
+model Service {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  category  Category[]
+  createdAt DateTime   @default(now())
+}
+
+model Category {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  Service         Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId       String?       @db.ObjectId
+  subcategory     Subcategory[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  Desc            String?
+  Prep            String?
+  Subs            String[]      @default([])
+  backgroundColor String?
+  textColor       String?
+}
+
+model Subcategory {
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  subcatquestionbank SubcategoryQuestions[]
+  subject            Subjects[]
+  Category           Category?              @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId         String?                @db.ObjectId
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  isShown            Boolean?
+}
+
+model Subjects {
+  id              String             @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  subquestionbank SubjectQuestions[]
+  chapters        Chapters[]
+  Subcategory     Subcategory?       @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  subcategoryId   String?            @db.ObjectId
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model Chapters {
+  id                   String              @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  chaptersquestionbank ChaptersQuestions[]
+  Subjects             Subjects?           @relation(fields: [subjectsId], references: [id], onDelete: Cascade)
+  subjectsId           String?             @db.ObjectId
+}
+
+model SubcategoryQuestions {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionName  String
+  awnsers       String[]
+  correctAwnser String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  subcategoryId String?      @db.ObjectId
+}
+
+model SubjectQuestions {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  questionName  String
+  awnsers       String[]
+  correctAwnser String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  Subjects      Subjects? @relation(fields: [subjectsId], references: [id], onDelete: Cascade)
+  subjectsId    String?   @db.ObjectId
+}
+
+model ChaptersQuestions {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  questionName  String
+  awnsers       String[]
+  correctAwnser String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  Chapters      Chapters? @relation(fields: [chaptersId], references: [id], onDelete: Cascade)
+  chaptersId    String?   @db.ObjectId
+}
+
+model Assessment {
+  id             String               @id @default(auto()) @map("_id") @db.ObjectId
+  name           String               @unique
+  questions      AssessmentQuestion[]
+  totalquestions Int?
+  duration       Int?
+  takes          Json
+  Subcatname     String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+}
+
+model AssessmentQuestion {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  questionId    String
+  questionName  String
+  answers       String[]
+  correctAnswer String
+  subjectsId    String
+  assessmentId  String     @db.ObjectId
+  assessment    Assessment @relation(fields: [assessmentId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model UserApplication {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  Name               String
+  FatherName         String
+  CNIC               String
+  MobileNumber       String
+  Email              String
+  DateOfBirth        DateTime
+  Gender             String
+  Qualification      String
+  Province           String
+  City               String
+  Imageurl           String
+  isVerified         Boolean
+  isViewed           Boolean
+  registrationNumber Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
