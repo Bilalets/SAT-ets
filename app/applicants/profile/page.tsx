@@ -180,7 +180,7 @@ const Profile: React.FC = () => {
       </div>
     ) : (
       userData.map((item) => (
-        <div key={item.id} className="mx-auto mt-10 lg:ml-96 px-4 sm:px-6 lg:px-8">
+        <div key={item?.id} className="mx-auto mt-10 lg:ml-96 px-4 sm:px-6 lg:px-8">
           <div className="bg-white max-w-2xl shadow overflow-hidden sm:rounded-lg">
             <div className="flex flex-col sm:flex-row px-4 py-5 sm:px-6">
               <div className="flex flex-col mt-10 sm:mt-0">
@@ -217,37 +217,37 @@ const Profile: React.FC = () => {
                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Name</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {item.name}
+                    {item?.name}
                   </dd>
                 </div>
                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Father Name</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {item.fatherName}
+                    {item?.fatherName}
                   </dd>
                 </div>
                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Email address</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {item.email}
+                    {item?.email}
                   </dd>
                 </div>
                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">City</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {item.city}
+                    {item?.city}
                   </dd>
                 </div>
                 <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Phone Number</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {item.phoneNumber}
+                    {item?.phoneNumber}
                   </dd>
                 </div>
                 <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {formatDate(item.dateofBirth)}
+                    {formatDate(item?.dateofBirth)}
                   </dd>
                 </div>
               </dl>
