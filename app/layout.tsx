@@ -1,4 +1,3 @@
-'use client'
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -21,14 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter(); // Move useRouter inside the component
-  
-  useEffect(() => {
-    const userEmail = getEmail(); // Replace with getEmail() logic
-    if (userEmail === '') {
-      router.replace('/'); // Redirect to '/' if userEmail is empty
-    }
-  }, [router]);
+ 
 
   return (
     <html lang="en">
