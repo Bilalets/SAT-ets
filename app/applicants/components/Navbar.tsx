@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
+import { getEmail } from '@/app/libs/myeail';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +17,7 @@ const Navbar = () => {
   const { data: session } = useSession();
 
   const handleSignOut = async () => {
+    console.log(getEmail());
     if (session?.user) {
       console.log('User found')
       console.log(session.user.email)

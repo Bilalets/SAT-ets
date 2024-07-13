@@ -2,7 +2,6 @@
 import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
-import Loader from "../../Loader";
 import { ArrowDown } from "lucide-react";
 import { Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Subcategory from "../Subcategory/page";

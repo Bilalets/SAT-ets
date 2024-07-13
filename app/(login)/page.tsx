@@ -10,6 +10,7 @@ import { AiOutlineLoading } from 'react-icons/ai';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {setEmail } from '../libs/myeail';
 
 interface FormValues {
   email: string;
@@ -74,10 +75,12 @@ const LoginScreen: React.FC = () => {
               : 'Invalid username or password';
           toast.error(errorMessage);
           setLoading(false);
+          console.log('this is data'+ data)
+          
         } else if (callback?.ok && !callback.error) {
           // Wait for a short duration to allow the session to update
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          // Manually refresh the session
+          setEmail(data.email);
           await getSession();
           router.replace('/applicants/home');
         }

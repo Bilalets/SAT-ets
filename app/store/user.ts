@@ -3,6 +3,8 @@ import { create } from "zustand";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { getEmail } from "../libs/myeail";
+
 
 // Define the store interface
 interface AppState {
@@ -62,7 +64,7 @@ const useAppStore = create<AppState>((set) => ({
 
 // Custom hook to use the store
 const useAppContext = () => {
-  const { data: session } = useSession();
+  const userEmail=getEmail()
 
   const getData = useAppStore((state) => state.getData);
   const getRecord = useAppStore((state) => state.getRecord);
@@ -72,11 +74,11 @@ const useAppContext = () => {
 
   // Fetch user ID when session changes (assuming session holds email)
   useEffect(() => {
-    if (session?.user?.email) {
-      fetchUserId(session.user.email);
+    if (userEmail) {
+      fetchUserId(userEmail);
     }
     // Add fetchUserId to the dependency array
-  }, [session, fetchUserId]);
+  }, [ userEmail,fetchUserId]);
 
   // Fetch records when getData?.id changes (ensures data exists before access)
   useEffect(() => {
