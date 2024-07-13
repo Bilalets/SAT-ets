@@ -6,6 +6,7 @@ import { Pencil } from "lucide-react";
 import { Spinner } from "flowbite-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { getEmail } from "@/app/libs/myeail";
 
 const Profile: React.FC = () => {
 
@@ -38,8 +39,9 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        const userEmail = getEmail();
         setLoading(true);
-        const res = await axios.get(`/api/getprofile/${session?.user?.email}`);
+        const res = await axios.get(`/api/getprofile/${userEmail}`);
         setUserData(res.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
