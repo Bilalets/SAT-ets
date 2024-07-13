@@ -15,8 +15,9 @@ const ForgotPassword: React.FC = () => {
 
     try {
       await axios.post('/api/forgetpassword', { email });
-      toast.success('Password reset email sent');
+      
       window.location.href='/'; 
+      toast.success('Password reset email sent');
     } catch (error) {
       toast.error('Failed to send password reset email');
     } finally {

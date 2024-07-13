@@ -18,6 +18,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     if (session?.user) {
       console.log('User found')
+      console.log(session.user.email)
       await signOut({ redirect: true, callbackUrl: '/' });
     }else{
       console.log('user not found')

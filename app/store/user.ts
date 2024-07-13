@@ -36,6 +36,7 @@ const useAppStore = create<AppState>((set) => ({
   fetchUserId: async (email: string) => {
     try {
       const response = await axios.post("/api/Getuserid", { email }, { headers: { "Cache-Control": "no-store" } });
+      console.log(response.data)
       set({ getData: response.data });
     } catch (error) {
       console.error("Error fetching user ID:", error);
