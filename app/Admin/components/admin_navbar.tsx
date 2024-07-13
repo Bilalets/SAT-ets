@@ -29,7 +29,7 @@ const Admin_navbar = () => {
   const { data: session } = useSession();
   const handleSignOut = async () => {
     const data = await signOut({ redirect: true, callbackUrl: '/' })
-
+   
   }
 
 

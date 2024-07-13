@@ -3,7 +3,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-import { getEmail } from "../libs/myeail";
+import { getEmail, setEmail } from "../libs/myeail";
 
 
 // Define the store interface
@@ -90,7 +90,7 @@ const useAppContext = () => {
 
   // Fetch user position when getData?.id changes (consistent logic)
 
-  return { getData, getRecord }; // Consistent naming
+  return { getData, getRecord,userEmail }; // Consistent naming
 };
 
 // Export the custom hook

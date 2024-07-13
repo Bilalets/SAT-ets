@@ -90,7 +90,7 @@ const Dashboard = () => {
         const response = await axios.post(
           "/api/Service/Subrecord",
           { userId: getData?.id },
-          { headers: { "Cache-Control": "no-store" } }
+          { headers:  { cache: 'no-cache'} } 
         );
         setrecord(response.data);
       } catch (error) {

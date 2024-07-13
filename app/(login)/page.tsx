@@ -20,6 +20,7 @@ interface FormValues {
 const LoginScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
+
   const router = useRouter();
   const {
     register,
@@ -75,7 +76,7 @@ const LoginScreen: React.FC = () => {
               : 'Invalid username or password';
           toast.error(errorMessage);
           setLoading(false);
-          console.log('this is data'+ data)
+         
           
         } else if (callback?.ok && !callback.error) {
           // Wait for a short duration to allow the session to update

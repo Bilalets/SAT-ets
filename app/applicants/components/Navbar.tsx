@@ -6,18 +6,22 @@ import { usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
-import { getEmail } from '@/app/libs/myeail';
+import { getEmail, setEmail } from '@/app/libs/myeail';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const baseurl = BASE_URL;
+  
+  let userEmail=getEmail()
   const pathname = usePathname();
   const router=useRouter()
   let fullPath = baseurl + pathname;
 
   const handleSignOut = async () => {
-    if (getEmail() !== null) {
+    if (userEmail !== null) {
+
       await signOut({ callbackUrl: "/", });
+      setEmail('')
     }
   };
 
