@@ -6,6 +6,7 @@ import ToasterContext from '@/app/context/ToasterContext';
 import AuthContext from './context/AuthContext';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Use useRouter from 'next/router'
+import { getEmail } from './libs/myeail';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,7 +24,7 @@ export default function RootLayout({
   const router = useRouter(); // Move useRouter inside the component
   
   useEffect(() => {
-    const userEmail = ''; // Replace with getEmail() logic
+    const userEmail = getEmail(); // Replace with getEmail() logic
     if (userEmail === '') {
       router.replace('/'); // Redirect to '/' if userEmail is empty
     }
