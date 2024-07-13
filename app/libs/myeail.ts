@@ -1,5 +1,5 @@
-let myEmail:string;
-export const setEmail = (email : string)=>{
+let myEmail:string | undefined;
+export const setEmail = (email : string | undefined)=>{
 myEmail = email;
 }
 

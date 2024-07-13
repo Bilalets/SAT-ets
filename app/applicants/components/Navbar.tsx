@@ -18,8 +18,8 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     if (userEmail !== null) {
-      console.log(getEmail())
-      setEmail("undefined")
+      setEmail("");
+      console.log("current email supposed to be null"+getEmail());
       await signOut({ callbackUrl: "/", });
       
     }
