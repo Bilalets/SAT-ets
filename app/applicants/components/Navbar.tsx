@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { LayoutDashboard, Home, History, CircleUserRound, Menu } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
@@ -12,17 +12,12 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const baseurl = BASE_URL;
   const pathname = usePathname();
-  
+  const router=useRouter()
   let fullPath = baseurl + pathname;
-  const { data: session } = useSession();
 
   const handleSignOut = async () => {
-    
-    if (getEmail()!=null) {
-      console.log('User found')
-      await signOut({ redirect: true, callbackUrl: '/' });
-    }else{
-      console.log('user not found')
+    if (getEmail() !== null) {
+      await signOut({ callbackUrl: "/", });
     }
   };
 
