@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
@@ -11,14 +10,13 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const { pathname } = url;
 
-
   // Get the session token
   const token = (await getToken({ req, secret: process.env.NEXTAUTH_SECRET })) as Token | null;
 
-
   // If there is no token, redirect to the login page
   if (!token) {
-    return NextResponse.redirect(new URL('/', req.url));
+    url.pathname = '/'; // Redirect to home page
+    return NextResponse.redirect(url);
   }
 
   // Get the user role from the token
@@ -32,23 +30,15 @@ export async function middleware(req: NextRequest) {
   };
 
   // Determine if the current path is protected and if the user has the required role
-  let isProtected = false;
   for (const route in protectedRoutes) {
     if (pathname.startsWith(route)) {
       const allowedRoles = protectedRoutes[route];
       if (!allowedRoles.includes(userRole)) {
-      
-        return NextResponse.redirect(new URL('/unauthorized', req.url));
+        url.pathname = '/unauthorized'; // Redirect to unauthorized page
+        return NextResponse.redirect(url);
       }
-      isProtected = true;
       break;
     }
-  }
-
-  // If the route is not protected, allow access
-  if (!isProtected) {
- 
-    return NextResponse.next();
   }
 
   return NextResponse.next();
