@@ -35,12 +35,13 @@ const Profile: React.FC = () => {
       toast.error("Error updating user");
     }
   };
-
+  let userEmail=getEmail()
   useEffect(() => {
     const fetchUserData = async () => {
+    
+      if (!userEmail) return; 
+
       try {
-        const userEmail = getEmail();
-        console.log(userEmail);
         setLoading(true);
         const res = await axios.get(`/api/getprofile/${userEmail}`);
         setUserData(res.data);
@@ -51,10 +52,8 @@ const Profile: React.FC = () => {
       }
     };
 
-    if (session?.user?.email) {
-      fetchUserData();
-    }
-  }, [session]);
+    fetchUserData();
+  }, [userEmail]);
 
   function closemodels() {
     isopen(false);
