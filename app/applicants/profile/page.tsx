@@ -40,6 +40,7 @@ const Profile: React.FC = () => {
     const fetchUserData = async () => {
       try {
         const userEmail = getEmail();
+        console.log(userEmail);
         setLoading(true);
         const res = await axios.get(`/api/getprofile/${userEmail}`);
         setUserData(res.data);
