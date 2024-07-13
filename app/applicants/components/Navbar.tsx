@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { LayoutDashboard, Home, History, CircleUserRound, Menu } from 'lucide-react';
-import { usePathname, useRouter} from 'next/navigation';
+import { usePathname, } from 'next/navigation';
 import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
@@ -14,14 +14,14 @@ const Navbar = () => {
   
   let userEmail=getEmail()
   const pathname = usePathname();
-  const router=useRouter()
   let fullPath = baseurl + pathname;
 
   const handleSignOut = async () => {
     if (userEmail !== null) {
-
+      console.log(getEmail())
+      setEmail("undefined")
       await signOut({ callbackUrl: "/", });
-      setEmail('')
+      
     }
   };
 

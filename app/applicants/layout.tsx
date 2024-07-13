@@ -21,7 +21,7 @@ const RootLayout: React.FC<RootLayoutProps> =  ({ children }) => {
   useEffect(() => {
     const userEmail = getEmail();
     console.log(userEmail) 
-    if (userEmail === '' || userEmail=== undefined) {
+    if (userEmail === '' || userEmail=== "undefined") {
       router.replace('/'); 
     }
   }, [router]);
