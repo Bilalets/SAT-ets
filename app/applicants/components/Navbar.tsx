@@ -26,11 +26,7 @@ const {data:session}=useSession()
     }
   };
 
-  useEffect(() => {
-    if (!session) {
-      router.push('/'); // Redirect to login page
-    }
-  }, [session, router]);
+
   const routes = [
     {
       icon: Home,
