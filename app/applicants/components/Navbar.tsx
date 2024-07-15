@@ -26,32 +26,7 @@ const {data:session,status}=useSession()
     }
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
-      if (status === 'authenticated') {
-        event.preventDefault();
-        try {
-          await signOut({ callbackUrl: "/",redirect: false }); // Sign out user without redirect
-        } catch (error) {
-          console.error("Error during sign out:", error);
-        }
-        // The return value of this function is what will be displayed in the browser dialog
-        return '';
-      }
-    };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [status]);
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/'); // Redirect to login page if not authenticated
-    }
-  }, [status, router]);
 
  
   const routes = [
