@@ -26,9 +26,7 @@ interface Record {
 }
 
 // Define the ID interface
-interface ID {
-  id: string;
-}
+
 
 // Create the store using zustand
 const useAppStore = create<AppState>((set) => ({
