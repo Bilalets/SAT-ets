@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { LayoutDashboard, Home, History, CircleUserRound, Menu } from 'lucide-react';
 import { usePathname, } from 'next/navigation';
@@ -14,16 +14,28 @@ const Navbar = () => {
   let userEmail=getEmail()
   const pathname = usePathname();
   let fullPath = baseurl + pathname;
-
+const {data:session}=useSession()
   const handleSignOut = async () => {
     if (userEmail !== null) {
       setEmail("");
-      console.log("current email supposed to be null" + getEmail());
+      
       await signOut({ callbackUrl: "/", redirect: false });
       window.location.reload(); // Ensure the page is reloaded after logout
     }
   };
+  useEffect(() => {
+    const handleBeforeUnload = async () => {
+      if (session) {
+        await signOut({ callbackUrl: "/", redirect: false });
+      }
+    };
 
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [session]);
   const routes = [
     {
       icon: Home,
