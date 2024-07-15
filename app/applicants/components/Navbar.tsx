@@ -25,22 +25,7 @@ const {data:session}=useSession()
       window.location.reload(); // Ensure the page is reloaded after logout
     }
   };
-  useEffect(() => {
-    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
-      if (session) {
-        event.preventDefault();
-        await signOut({ callbackUrl: "/", redirect: false });
-        // The return value of this function is what will be displayed in the browser dialog
-        return ''; 
-      }
-    };
-  
-    window.addEventListener('beforeunload', handleBeforeUnload);
-  
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [session]);
+
   useEffect(() => {
     if (!session) {
       router.push('/'); // Redirect to login page
