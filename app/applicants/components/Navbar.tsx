@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
 import { getEmail, setEmail } from '@/app/libs/myeail';
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const baseurl = BASE_URL;
@@ -19,9 +18,9 @@ const Navbar = () => {
   const handleSignOut = async () => {
     if (userEmail !== null) {
       setEmail("");
-      console.log("current email supposed to be null"+getEmail());
-      await signOut({ callbackUrl: "/", });
-      
+      console.log("current email supposed to be null" + getEmail());
+      await signOut({ callbackUrl: "/", redirect: false });
+      window.location.reload(); // Ensure the page is reloaded after logout
     }
   };
 

@@ -18,11 +18,11 @@ interface RootLayoutProps {
 const RootLayout: React.FC<RootLayoutProps> =  ({ children }) => {
   const router = useRouter(); // Move useRouter inside the component
   const {data:session,status}=useSession()
-useLayoutEffect(() => {
-  if (status === 'unauthenticated') {
-    router.push('/'); // Redirect to login if not authenticated
-  }
-  }, [router,status]);
+  useLayoutEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/'); // Redirect to login if not authenticated
+    }
+  }, [status, router]);
   return (
     
 <AuthContext>
