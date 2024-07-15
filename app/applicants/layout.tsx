@@ -23,12 +23,7 @@ const RootLayout: React.FC<RootLayoutProps> =  ({ children }) => {
       router.push('/'); // Redirect to login if not authenticated
     }
   }, [status, router]);
-  useLayoutEffect(() => {
-    // Redirect to login page if there's no session
-    if (!session) {
-      router.push('/');
-    }
-  }, [session, router]);
+ 
   return (
     
 <AuthContext>

@@ -16,7 +16,7 @@ const Navbar = () => {
   const pathname = usePathname();
   let fullPath = baseurl + pathname;
   const router = useRouter();
-const {data:session}=useSession()
+const {data:session,status}=useSession()
   const handleSignOut = async () => {
     if (userEmail !== null) {
       setEmail("");
@@ -26,7 +26,32 @@ const {data:session}=useSession()
     }
   };
 
- // Listen for changes in the session object
+  useEffect(() => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+      if (status === 'authenticated') {
+        event.preventDefault();
+        try {
+          await signOut({ redirect: false }); // Sign out user without redirect
+        } catch (error) {
+          console.error("Error during sign out:", error);
+        }
+        // The return value of this function is what will be displayed in the browser dialog
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [status]);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/'); // Redirect to login page if not authenticated
+    }
+  }, [status, router]);
 
  
   const routes = [
