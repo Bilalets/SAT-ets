@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { Metadata } from 'next';
 import Navbar from './components/Navbar';
 import { SessionProvider, useSession } from 'next-auth/react';
@@ -18,7 +18,7 @@ interface RootLayoutProps {
 const RootLayout: React.FC<RootLayoutProps> =  ({ children }) => {
   const router = useRouter(); // Move useRouter inside the component
   
-  useEffect(() => {
+useLayoutEffect(() => {
     const userEmail = getEmail();
     console.log(userEmail) 
     if (userEmail === '' || userEmail=== "undefined") {
