@@ -45,7 +45,14 @@ const {data:session}=useSession()
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [session]);
+  }, [session]); // Listen for changes in the session object
+
+  useEffect(() => {
+    // Redirect to login page if there's no session
+    if (!session) {
+      router.push('/');
+    }
+  }, [session, router]);
   const routes = [
     {
       icon: Home,
