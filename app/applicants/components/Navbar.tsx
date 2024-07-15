@@ -31,7 +31,7 @@ const {data:session,status}=useSession()
       if (status === 'authenticated') {
         event.preventDefault();
         try {
-          await signOut({ redirect: false }); // Sign out user without redirect
+          await signOut({ callbackUrl: "/",redirect: false }); // Sign out user without redirect
         } catch (error) {
           console.error("Error during sign out:", error);
         }
