@@ -24,9 +24,12 @@ const {data:session}=useSession()
     }
   };
   useEffect(() => {
-    const handleBeforeUnload = async () => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
       if (session) {
+        event.preventDefault();
         await signOut({ callbackUrl: "/", redirect: false });
+        // The return value of this function is what will be displayed in the browser dialog
+        return ''; 
       }
     };
 
