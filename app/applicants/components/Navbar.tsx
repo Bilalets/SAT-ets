@@ -26,33 +26,9 @@ const {data:session}=useSession()
     }
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
-      if (session) {
-        event.preventDefault(); // Cancel the event to show a dialog
-        try {
-          await signOut({ callbackUrl: "/", redirect: false }); // Sign out user
-        } catch (error) {
-          console.error("Error during sign out:", error);
-        }
-        // The return value of this function is what will be displayed in the browser dialog
-        return ''; 
-      }
-    };
+ // Listen for changes in the session object
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [session]); // Listen for changes in the session object
-
-  useEffect(() => {
-    // Redirect to login page if there's no session
-    if (!session) {
-      router.push('/');
-    }
-  }, [session, router]);
+ 
   const routes = [
     {
       icon: Home,
