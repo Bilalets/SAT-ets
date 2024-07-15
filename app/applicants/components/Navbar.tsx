@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { BASE_URL } from '@/config/Constants';
 import { signOut, useSession } from 'next-auth/react';
 import { getEmail, setEmail } from '@/app/libs/myeail';
+import { useRouter } from 'next/navigation';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const baseurl = BASE_URL;
@@ -14,6 +15,7 @@ const Navbar = () => {
   let userEmail=getEmail()
   const pathname = usePathname();
   let fullPath = baseurl + pathname;
+  const router = useRouter();
 const {data:session}=useSession()
   const handleSignOut = async () => {
     if (userEmail !== null) {
@@ -23,7 +25,27 @@ const {data:session}=useSession()
       window.location.reload(); // Ensure the page is reloaded after logout
     }
   };
-
+  useEffect(() => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+      if (session) {
+        event.preventDefault();
+        await signOut({ callbackUrl: "/", redirect: false });
+        // The return value of this function is what will be displayed in the browser dialog
+        return ''; 
+      }
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [session]);
+  useEffect(() => {
+    if (!session) {
+      router.push('/'); // Redirect to login page
+    }
+  }, [session, router]);
   const routes = [
     {
       icon: Home,
