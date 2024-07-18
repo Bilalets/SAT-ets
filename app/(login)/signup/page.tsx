@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { CreditCard } from 'lucide-react';
 
 interface FormValues {
   name: string;
@@ -27,7 +28,8 @@ interface FormValues {
   dateofBirth: string;
   password: string;
   city: string;
-  role: string;  // Add role to the form values
+  role: string; 
+  Cnic:string; // Add role to the form values
 }
 
 const getPasswordStrength = (password: string): string => {
@@ -67,11 +69,11 @@ const SignUp = () => {
     try {
       data.dateofBirth = new Date(data.dateofBirth).toISOString();
       data.phoneNumber = data.phoneNumber.toString();
-
+  
       const response = await axios.post(`/api/register`, data);
-      
+  
       if (response.status === 201) {
-        toast.success('Account Created Successfully Please Verify Your Account');
+        toast.success('Account Created Successfully. Please Verify Your Account');
         router.push('/');
       }
     } catch (error) {
@@ -134,7 +136,24 @@ const SignUp = () => {
                 </span>
               )}
             </div>
-
+            <div className="mt-4">
+              <Label htmlFor="CNIC" value="Enter CNIC" />
+              <TextInput
+                {...register('Cnic', {
+                  required: 'CNIC is Required',
+                })}
+                type="text"
+                id="CNIC"
+                shadow
+                icon={CreditCard}
+                placeholder="Enter CNIC"
+              />
+            {errors.Cnic && (
+  <span className=" text-sm text-red-500">
+    {errors.Cnic.message}
+  </span>
+)}
+            </div>
             <div className="mt-4">
               <Label value="Date of Birth" />
               <TextInput

@@ -15,8 +15,7 @@ const Navbar = () => {
   let userEmail=getEmail()
   const pathname = usePathname();
   let fullPath = baseurl + pathname;
-  const router = useRouter();
-const {data:session,status}=useSession()
+
   const handleSignOut = async () => {
     if (userEmail !== null) {
       setEmail("");

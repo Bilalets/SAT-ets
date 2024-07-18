@@ -20,7 +20,8 @@ export async function POST(req: Request) {
         Correctawn:true,
         Wrongawn:true,
         subjectname:true,
-        createdAt:true
+        createdAt:true,
+        Totalquestion:true
       },
       
     });

@@ -1,11 +1,10 @@
 import bcrypt from 'bcrypt';
-import { PrismaClient, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { add } from 'date-fns';
 import { sendVerificationEmail } from '../../libs/mailer';
-
-const prisma = new PrismaClient();
+import prisma from '../../libs/prismadb'
 
 type User = {
   name: string;
@@ -17,6 +16,7 @@ type User = {
   password: string;
   emailVerified: boolean;
   role: Role;
+  Cnic: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       dateofBirth,
       emailVerified,
+      Cnic,
       role = Role.applicant,
     } = body;
 
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       dateofBirth,
       fatherName,
       email,
+      Cnic,
       password: hashedPassword,
       emailVerified: false,
       role,
@@ -81,5 +83,6 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Internal server error', { status: 500 });
   }
 }
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
+
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';

@@ -84,6 +84,7 @@ const MyAssessment = () => {
         Wrongawn: result.wrongAnswers.toString(),
         Correctawn: result.correctAnswers.toString(),
         subjectname: subjectname,
+        Totalquestion:assessment?.questions.length.toString()
       });
       toast.success('Quiz Result Saved Successfully');
     } catch (error) {

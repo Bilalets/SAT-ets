@@ -30,6 +30,7 @@ const Profile: React.FC = () => {
       });
       toast.success("User updated successfully");
       closemodels() 
+      
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error("Error updating user");

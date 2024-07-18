@@ -5,14 +5,15 @@ Percentage:string
 Wrongawn :string
 Correctawn:string
 subjectname:string
+Totalquestion:string
 }
 
 export async function POST(req: Request) {
 
 try {
     const body = await req.json() as usertest
-    const {Percentage,Correctawn,Wrongawn,subjectname,userId }=body
-    const createdrecord: usertest = {Percentage,Correctawn,Wrongawn,subjectname,userId }
+    const {Percentage,Correctawn,Wrongawn,subjectname,userId ,Totalquestion}=body
+    const createdrecord: usertest = {Percentage,Correctawn,Wrongawn,subjectname,userId,Totalquestion }
     const createdtest= await prisma.saveRecord.create({data:createdrecord})
     return Response.json([createdtest]);
 } catch (error) {
