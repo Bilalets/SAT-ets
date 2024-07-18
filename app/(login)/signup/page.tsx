@@ -142,7 +142,7 @@ const SignUp = () => {
                 {...register('Cnic', {
                   required: 'CNIC is Required',
                 })}
-                type="text"
+                type="number"
                 id="CNIC"
                 shadow
                 icon={CreditCard}
