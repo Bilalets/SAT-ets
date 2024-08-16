@@ -33,27 +33,10 @@ const LoginScreen: React.FC = () => {
       router.replace('/applicants/home');
     }
     if ((session?.user as any)?.role === 'admin') {
-      router.replace('/Admin/dashboard/upload');
+      router.replace('/Admin/dashboard/assessment');
     }
-    if (session?.user?.email) {
-      if (session.user.email === 'ots123@gmail.com') {
-        router.replace('/Admin/dashboard/upload');
-      }
-    }
-    if (session?.user?.email === 'romanets@gmail.com') {
-      router.replace('/Assistant/Dashboard');
-    }
-    if (session?.user?.email === 'farazets@gmail.com') {
-      router.replace('/Assistant/Dashboard');
-    }
-    if (session?.user?.email === 'aliets@ets.com') {
-      router.replace('/Assistant/Dashboard');
-    }
-    if (session?.user?.email) {
-      if (session.user.email === 'applicant123@gmail.com') {
-        router.replace('/applicants/home');
-      }
-    }
+  
+
     if (session?.user?.email) {
       if (session.user.email === 'admin123@gmail.com') {
         router.replace('/superadmin/dashboard/statistics');

@@ -38,7 +38,7 @@ export async function middleware(req: NextRequest) {
       const allowedRoles = protectedRoutes[route];
       if (!allowedRoles.includes(userRole)) {
       
-        return NextResponse.redirect(new URL('/unauthorized', req.url));
+        return NextResponse.redirect(new URL('/Admin/dashboard/assessment', req.url));
       }
       isProtected = true;
       break;

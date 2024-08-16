@@ -85,7 +85,7 @@ const UploadQuestions = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
   const [selectedSubject, setSelectedSubject] = useState<Subject>();
   const [clickedSubjectId, setClickedSubjectId] = useState<Subject>();
-  const { data: session } = useSession();
+const [displaySubject,setSubject]=useState<Subject>()
 
 
   const SamplePrevArrow: React.FC<ArrowProps> = (props) => {
@@ -274,7 +274,7 @@ const UploadQuestions = () => {
         
         </div>
       </div>
-
+      {displaySubject && (<h1 className="ml-4">Copy subject Id:{displaySubject.id}</h1>)}
       <div className="flex flex-row gap-16  ">
         <div className=" text-center w-[250px] h-[530px]  ml-20 bg-white mb-10 shadow border-1 overflow-scroll ">
           <div className=" flex flex-row gap-6 h-[50px] bg-gray-800 text-white justify-center items-center ">
@@ -292,10 +292,11 @@ const UploadQuestions = () => {
               },
             }}
           >
+        
             <Menu>
               <hr />
               {selectedSubcategory?.subject.map((subject) => (
-                <div key={subject.id} >
+                <div key={subject.id} onClick={()=>setSubject(subject)} >
                   <div
                     style={{
                       backgroundColor:
