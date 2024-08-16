@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+
 const Upload = () => {
   const [questionName, setQuestionname] = useState<string>("");
   const [addsubs, setsubs] = useState<string>("");
@@ -178,6 +179,7 @@ const Upload = () => {
             Submit
           </button>
         </div>
+      
       </div>
     </>
   );

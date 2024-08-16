@@ -5,13 +5,17 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  LogOutIcon,
   PlayIcon,
   Redo,
   SaveIcon,
   Undo,
 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import {
   Sidebar,
   Menu,
@@ -19,6 +23,8 @@ import {
   SubMenu,
   sidebarClasses,
 } from "react-pro-sidebar";
+import Slider from "react-slick";
+import FileUpload from "./Fileupload";
 type QuestionRequestData = {
   questionName: string | undefined;
   awnsers: (string | undefined)[];
@@ -31,6 +37,13 @@ interface Chapter {
   id: string;
   name: string;
 }
+
+interface ArrowProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: () => void;
+}
+
 interface chap {
   id: string;
   name: string;
@@ -72,6 +85,42 @@ const UploadQuestions = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
   const [selectedSubject, setSelectedSubject] = useState<Subject>();
   const [clickedSubjectId, setClickedSubjectId] = useState<Subject>();
+  const { data: session } = useSession();
+
+
+  const SamplePrevArrow: React.FC<ArrowProps> = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style,  display: "block", backgroundColor: "black"  }}
+        onClick={onClick}
+      />
+    );
+  };
+  
+  const SampleNextArrow: React.FC<ArrowProps> = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "flex", backgroundColor: "black" }}
+        onClick={onClick}
+      />
+    );
+  };
+  var settings = {
+    infinite: false,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <SampleNextArrow/>,
+    prevArrow: <SamplePrevArrow />
+  };
+
+
+
+
   const handleSubcategoryClick = (item: Subcategory) => {
     setSelectedSubcategory(item);
   };
@@ -86,8 +135,8 @@ const UploadQuestions = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/Everyservice/");
-     
+      const response = await axios.get("/api/Everyservice");
+
       const data = response.data;
       setdata(data);
     } catch (error) {
@@ -98,46 +147,9 @@ const UploadQuestions = () => {
     fetchData();
   }, []);
 
-  const [set, seed] = useState<Subcategory[]>([]);
-  const [translateValue, setTranslateValue] = useState(0);
-  const itemWidth = 60;
-  //
-  const containerWidth = itemWidth * set.length;
-  useEffect(() => {
-    if (selectedcattegory) {
-      const subcategories = selectedcattegory.subcategory;
-      seed(subcategories);
-    }
-  }, [selectedcattegory, seed]);
-  const handleMoveRight = () => {
-    const firstItem = set[0];
-    const newSet = set.slice(1).concat(firstItem);
-    seed(newSet);
 
-    const newTranslateValue = translateValue - itemWidth;
-
-    if (Math.abs(newTranslateValue) >= containerWidth) {
-      setTranslateValue(0);
-    } else {
-      setTranslateValue(newTranslateValue);
-    }
-  };
-
-  const handleMoveLeft = () => {
-    const lastItem = set[set.length - 1];
-    const newSet = [lastItem, ...set.slice(0, -1)];
-    seed(newSet);
-
-    const newTranslateValue = translateValue + itemWidth;
-
-    if (newTranslateValue > 0) {
-      setTranslateValue(-(containerWidth - itemWidth));
-    } else {
-      setTranslateValue(newTranslateValue);
-    }
-  };
-
-  let displaycategory = selectedservice?.category.map((item) => (
+ 
+  let displaycategory = selectedservice?.category?.map((item) => (
     <div
       onClick={() => handlecategoryclick(item)}
       className="flex flex-row gap-5"
@@ -168,7 +180,16 @@ const UploadQuestions = () => {
     setAwnser3("");
     setAwnser4("");
   };
+
+
+
+
+
   const addQuestion = async () => {
+    if (!question || !correctAwn || !awnser1 || !awnser2 || !awnser3 || !awnser4) {
+      alert("Please fill in all fields before saving the question.");
+      return; 
+    }
     try {
       let requestData: QuestionRequestData = {
         questionName: question,
@@ -198,11 +219,14 @@ const UploadQuestions = () => {
       toast.error("Failed to save question.");
     }
   };
-
   return (
     <>
-      <div className="flex flex-row items-center  ml-[570px] mb-10 gap-5">
-        <div className=" flex ml-[-200px]">
+     <FileUpload/>
+      <div className="flex flex-row m-5">
+      
+      </div>
+      <div className="flex flex-row items-center  ml-[690px] mb-10 gap-5">
+        <div className=" flex ml-[-300px]">
           <h1 className="text-xl">Select Service</h1>
         </div>
         <div className=" flex ml-48">
@@ -218,7 +242,7 @@ const UploadQuestions = () => {
         </div>
       </div>
       <div className=" flex flex-col  gap-10">
-        <div className=" flex flex-row rounded-md bg-white gap-14 shadow h-14 w-[600px] ml-[390px] items-center justify-center">
+        <div className=" flex flex-row rounded-md bg-white gap-14 shadow h-14 w-[700px] ml-[390px] items-center justify-center">
           <div className=" mt-1 ml-[-160px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-3xl text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
             Categories
           </div>
@@ -226,43 +250,33 @@ const UploadQuestions = () => {
             {displaycategory}
           </div>
         </div>
-        <div className="flex flex-row bg-white items-center shadow rounded-md   h-16 w-[600px] ml-[390px]">
-          <div className=" ml-3">
-            <button onClick={() => handleMoveLeft()}>
-              {" "}
-              <PlayIcon className="transform -scale-x-100" />
-            </button>
-          </div>
-          <div className="overflow-hidden w-[300px] ml-[100px]">
-            <div
-              className="flex transition-transform duration-300 gap-10 "
-              style={{
-                transform: `translateX(${translateValue}px)`,
-              }}
-            >
-              {set.map((item) => (
-                <div
-                  key={item.id}
-                  className="cursor-pointer w-[500px]"
-                  onClick={() => handleSubcategoryClick(item)}
-                >
-                  {item.name}
+        <div className="flex flex-row bg-white items-center shadow rounded-md h-20 w-[700px] ml-[390px]">
+          
+        <div className="flex ml-52 justify-center items-center" >
+                  <div className="w-60  justify-center items-center text-center ">
+                    <Slider {...settings} >
+                      {selectedcattegory?.subcategory.map((sub) => (
+                        <div
+                          className="justify-center items-center"
+                          key={sub.id}
+                        >
+                          <button
+                             onClick={() => handleSubcategoryClick(sub)}
+                            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                          >
+                         {sub.name}
+                          </button>
+                        </div>
+                      ))}
+                    </Slider>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <button onClick={() => handleMoveRight()} className=" ml-32">
-              {" "}
-              <PlayIcon className="w-6 h-6" />
-            </button>
-          </div>
+        
         </div>
       </div>
-      <div className=" absolute">
-      {selectedSubcategory?.subject && selectedSubcategory.subject.length > 0 && (<div>
-        <div className=" text-center w-[250px] h-[530px] ml-16 overflow-scroll  bg-white mb-10 shadow border-1 ">
+
+      <div className="flex flex-row gap-16  ">
+        <div className=" text-center w-[250px] h-[530px]  ml-20 bg-white mb-10 shadow border-1 overflow-scroll ">
           <div className=" flex flex-row gap-6 h-[50px] bg-gray-800 text-white justify-center items-center ">
             <div>
               <BookOpen />
@@ -271,7 +285,6 @@ const UploadQuestions = () => {
               <h1 className="text-xl">Subjects</h1>
             </div>
           </div>
-          
           <Sidebar
             rootStyles={{
               [`.${sidebarClasses.container}`]: {
@@ -282,7 +295,7 @@ const UploadQuestions = () => {
             <Menu>
               <hr />
               {selectedSubcategory?.subject.map((subject) => (
-                <div key={subject.id}>
+                <div key={subject.id} >
                   <div
                     style={{
                       backgroundColor:
@@ -304,13 +317,8 @@ const UploadQuestions = () => {
           </Sidebar>
         </div>
 
-      </div>)}
-      </div>
-      <div className="flex flex-row ml-96  gap-16 ">
-   
-       <div className=" flex">
-        <div className=" bg-white shadow mt-8 h-[500px] w-[600px]  p-12 border-1">
-          {selectedSubject?.chapters  && selectedSubject.chapters.length > 0 && (   <div className="w-[200px] ml-72 mb-10">
+        <div className=" bg-white shadow mt-8 h-[500px] w-[700px]  p-12 border-1">
+          <div className="w-[200px] ml-80 mb-10">
             <select
               id="countries"
               onChange={handleChapterChange}
@@ -325,10 +333,7 @@ const UploadQuestions = () => {
                 );
               })}
             </select>
-          </div>)}
-      
-      
-
+          </div>
           <div className=" flex flex-row gap-10 ">
             <div className="flex flex-col">
               <div>
@@ -336,7 +341,7 @@ const UploadQuestions = () => {
                 <input
                   value={question}
                   placeholder="Enter Awnser-5 Text"
-                  className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  className="bg-gray-100 w-80 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                   type="text"
                   onChange={(e) => setQuestion(e.target.value)}
                 />
@@ -417,7 +422,6 @@ const UploadQuestions = () => {
               </button>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </>

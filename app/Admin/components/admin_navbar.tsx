@@ -24,12 +24,14 @@ import {
   sidebarClasses,
 } from "react-pro-sidebar";
 import { signOut, useSession } from "next-auth/react";
+import { getEmail,setEmail  } from "@/app/libs/myeail";
 
 const Admin_navbar = () => {
   const { data: session } = useSession();
+  let userEmail=getEmail()
   const handleSignOut = async () => {
     const data = await signOut({ redirect: true, callbackUrl: '/' })
-   
+
   }
 
 

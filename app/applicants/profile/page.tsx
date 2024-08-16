@@ -10,7 +10,6 @@ import { getEmail } from "@/app/libs/myeail";
 
 const Profile: React.FC = () => {
 
-  const { data: session, status } = useSession();
   const [username, setName] = useState<string>();
   const [setfather, setfatherName] = useState<string>();
   const [setPhone, setPhoneNumber] = useState<string>();
@@ -23,7 +22,7 @@ const Profile: React.FC = () => {
     try {
       await axios.put("/api/updateuser/", {
         name: username,
-        email: `${session?.user?.email}`,
+        email: userEmail,
         fatherName: setfather,
         phoneNumber: setPhone,
         dateofBirth: setDateofbirth,
