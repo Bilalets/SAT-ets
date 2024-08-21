@@ -27,12 +27,16 @@ import { signOut, useSession } from "next-auth/react";
 import { getEmail,setEmail  } from "@/app/libs/myeail";
 
 const Admin_navbar = () => {
-  const { data: session } = useSession();
+ 
   let userEmail=getEmail()
   const handleSignOut = async () => {
-    const data = await signOut({ redirect: true, callbackUrl: '/' })
-
-  }
+    if (userEmail !== null) {
+      setEmail("");
+      
+      await signOut({ callbackUrl: "/", redirect: false });
+      window.location.reload(); 
+    }
+  };
 
 
   return (

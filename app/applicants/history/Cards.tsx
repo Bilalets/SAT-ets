@@ -6,6 +6,7 @@ import useAppContext from "@/app/store/user";
 import { getEmail } from "@/app/libs/myeail";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import Image from "next/image";
 
 interface Record {
   Percentage: string;
@@ -80,22 +81,37 @@ console.log(userData)
 
   const handleDownload = () => {
     const input = document.getElementById('pdf-content') as HTMLElement;
-
-    html2canvas(input)
+  
+    html2canvas(input, { scale: 2 }) // Increase the scale for better quality
       .then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
+  
         const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = imgProps.width;
+        const imgHeight = imgProps.height;
+  
+        // Calculate the height ratio
+        const imgRatio = imgWidth / imgHeight;
+        const pdfRatio = pdfWidth / pdfHeight;
+  
+        let finalWidth = pdfWidth;
+        let finalHeight = pdfWidth / imgRatio;
+  
+        if (finalHeight > pdfHeight) {
+          finalHeight = pdfHeight;
+          finalWidth = pdfHeight * imgRatio;
+        }
+  
+        pdf.addImage(imgData, 'PNG', 0, 0, finalWidth, finalHeight);
         pdf.save('result-card.pdf');
       })
       .catch((error) => {
         console.error('Error generating PDF:', error);
       });
-  };
-
+  }
   return (
     <>
       <div className="flex flex-col items-center">
@@ -153,7 +169,8 @@ console.log(userData)
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h1 className="text-lg font-bold">Eagle Testing Service (ETS)</h1>
+                  <Image src={'/images/ETS.png'} width={100} height={100} alt="image"/>
+                  <h1 className="text-lg  font-bold mt-2">Eagle Testing Service </h1>
                   <h2 className="mt-2 text-xl font-bold">RESULT CARD</h2>
                 </div>
               </div>
@@ -204,9 +221,7 @@ console.log(userData)
                   </tbody>
                 </table>
               </div>
-              <p className="text-sm">
-                <strong>Note:</strong> This result card will remain valid for 2 years from the date of test.
-              </p>
+            
             </div>
           </div>
           <div className="flex justify-center mt-4">

@@ -199,6 +199,7 @@ const EditAssessment = () => {
 
   return (
     <>
+    <h1 className="text-center font-bold text-3xl mb-8">Edit Assessment</h1>
       <div>
         {modal1}
         {assessments.map((assessment) => (

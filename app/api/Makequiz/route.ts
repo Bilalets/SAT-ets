@@ -6,12 +6,13 @@ interface TestRec {
   duration: number;
   totalquestions: number;
   Subcatname:string
+  Subcatid:string
 }
 
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as TestRec;
-    const { name, takes, duration, totalquestions,Subcatname } = body;
+    const { name, takes, duration, totalquestions,Subcatname,Subcatid } = body;
 
     // Check if an assessment with the same name already exists
     const existingAssessment = await prisma.assessment.findUnique({
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
         duration: duration,
         Subcatname:Subcatname,
         totalquestions: totalquestions,
+        Subcatid:Subcatid,
       },
     });
 

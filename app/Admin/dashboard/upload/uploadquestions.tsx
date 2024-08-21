@@ -93,7 +93,7 @@ const [displaySubject,setSubject]=useState<Subject>()
     return (
       <div
         className={className}
-        style={{ ...style,  display: "block", backgroundColor: "black"  }}
+        style={{ ...style,  display: "block", backgroundColor: "black",color:'white'  }}
         onClick={onClick}
       />
     );
@@ -104,7 +104,7 @@ const [displaySubject,setSubject]=useState<Subject>()
     return (
       <div
         className={className}
-        style={{ ...style, display: "flex", backgroundColor: "black" }}
+        style={{ ...style, display: "flex", backgroundColor: "black",color:'white' }}
         onClick={onClick}
       />
     );
@@ -150,6 +150,7 @@ const [displaySubject,setSubject]=useState<Subject>()
 
  
   let displaycategory = selectedservice?.category?.map((item) => (
+  
     <div
       onClick={() => handlecategoryclick(item)}
       className="flex flex-row gap-5"
@@ -158,6 +159,23 @@ const [displaySubject,setSubject]=useState<Subject>()
       {item.name}
     </div>
   ));
+  const displaycategorys = (
+    <Slider {...settings}>
+      {selectedservice?.category?.map((item) => (
+        <div  key={item.id} className="justify-center items-center  ml-9">
+        <button
+          onClick={() => handlecategoryclick(item)}
+          className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+
+          key={item.id}
+        >
+         {item.name}
+        </button>
+        </div>
+
+      ))}
+    </Slider>
+  );
   const handleservicechange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedserviceId = event.target.value;
     const selservice = getdata?.find((ser) => ser.name === selectedserviceId);
@@ -225,8 +243,8 @@ const [displaySubject,setSubject]=useState<Subject>()
       <div className="flex flex-row m-5">
       
       </div>
-      <div className="flex flex-row items-center  ml-[690px] mb-10 gap-5">
-        <div className=" flex ml-[-300px]">
+      <div className="flex flex-row items-center  ml-[500px] mb-10 gap-5">
+        <div className=" flex ">
           <h1 className="text-xl">Select Service</h1>
         </div>
         <div className=" flex ml-48">
@@ -243,10 +261,10 @@ const [displaySubject,setSubject]=useState<Subject>()
       </div>
       <div className=" flex flex-col  gap-10">
         <div className=" flex flex-row rounded-md bg-white gap-14 shadow h-14 w-[700px] ml-[390px] items-center justify-center">
-          <div className=" mt-1 ml-[-160px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-3xl text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+          <div className=" mt-1  text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-3xl text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
             Categories
           </div>
-          <div className="flex cursor-pointer flex-row overflow-hidden w-[250px] gap-5">
+          <div className="flex  justify-center gap-4 cursor-pointer overflow-scroll items-center text-center w-96 ">
             {displaycategory}
           </div>
         </div>
@@ -274,7 +292,7 @@ const [displaySubject,setSubject]=useState<Subject>()
         
         </div>
       </div>
-      {displaySubject && (<h1 className="ml-4">Copy subject Id:{displaySubject.id}</h1>)}
+      {displaySubject && (<h1 className="ml-4 mb-8">Copy subject Id:{displaySubject.id}</h1>)}
       <div className="flex flex-row gap-16  ">
         <div className=" text-center w-[250px] h-[530px]  ml-20 bg-white mb-10 shadow border-1 overflow-scroll ">
           <div className=" flex flex-row gap-6 h-[50px] bg-gray-800 text-white justify-center items-center ">
@@ -319,21 +337,8 @@ const [displaySubject,setSubject]=useState<Subject>()
         </div>
 
         <div className=" bg-white shadow mt-8 h-[500px] w-[700px]  p-12 border-1">
-          <div className="w-[200px] ml-80 mb-10">
-            <select
-              id="countries"
-              onChange={handleChapterChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option>Select Chapter</option>
-              {selectedSubject?.chapters?.map((chapter) => {
-                return (
-                  <option key={chapter.id} value={chapter.id}>
-                    {chapter.name}
-                  </option>
-                );
-              })}
-            </select>
+          <div className=" font-bold text-2xl justify-center  flex mb-10">
+        <h1>Fill all the fields to upload question </h1>
           </div>
           <div className=" flex flex-row gap-10 ">
             <div className="flex flex-col">

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { Button } from 'flowbite-react';
 
 const FileUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -41,11 +42,15 @@ const FileUpload: React.FC = () => {
 
   return (
     <div>
-      <h1>Upload CSV File</h1>
-      <input type="file" accept=".csv" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={loading}>
+      <h1 className=' justify-center flex'>Upload CSV File (Check the 
+       Format Before Uploading)</h1>
+       <div className='flex flex-row justify-center'>
+       <input type="file" accept=".csv" onChange={handleFileChange} />
+      <Button  color="dark" onClick={handleUpload} disabled={loading}>
         {loading ? 'Uploading...' : 'Upload'}
-      </button>
+      </Button>
+       </div>
+   
     </div>
   );
 };

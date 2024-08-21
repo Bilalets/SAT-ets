@@ -32,7 +32,7 @@ interface Assessment {
 
 const MyAssessment = () => {
   const searchParams = useSearchParams();
-  const subjectname = searchParams.get("name");
+  const subjectname = searchParams.get("id");
   const { getData } = useAppContext();
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [activeQuestion, setActiveQuestion] = useState(0);
@@ -160,13 +160,13 @@ const MyAssessment = () => {
   }
 
   if (assessment.questions.length === 0) {
-    return <div className="text-center">No assessment found for &#39;{subjectname}&#39;</div>;
+    return <div className="text-center">No assessment found</div>;
   }
 
   return (
     <div className="w-full h-screen overflow-hidden">
       <div className="flex-col justify-center text-center mt-10">
-        <p className="text-2xl">Assessment for {subjectname}</p>
+        <p className="text-2xl"> Test Assessment</p>
         {showResult ? (
           <p>Time Up</p>
         ) : (

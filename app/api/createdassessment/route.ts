@@ -7,7 +7,7 @@ interface Takes {
 
 export async function GET(req: Request) {
   try {
-    const createdassessment = await prisma.assessment.findMany({
+    const createdAssessments = await prisma.assessment.findMany({
       select: {
         id: true,
         name: true,
@@ -15,28 +15,28 @@ export async function GET(req: Request) {
         duration: true,
         Subcatname: true,
         totalquestions: true,
+        Subcatid: true
       },
     });
 
     const processedAssessments = await Promise.all(
-      createdassessment.map(async (assessment) => {
+      createdAssessments.map(async (assessment) => {
         const takes = assessment.takes as Prisma.JsonObject;
 
-        if (takes) {
+        if (takes && typeof takes === 'object') {
           const parsedTakes: Record<string, number> = {};
           for (const key in takes) {
-            if (typeof takes[key] === "number") {
+            if (typeof takes[key] === 'number') {
               parsedTakes[key] = takes[key] as number;
             }
           }
 
-          const subjects = await subjectname({ takes: parsedTakes });
+          const subjects = await getSubjectNames({ takes: parsedTakes });
           return {
             ...assessment,
             subjects,
-            // Map takes to include subject names
             takes: Object.keys(parsedTakes).reduce((acc, key) => {
-              acc[subjects[key].name] = parsedTakes[key];
+              acc[subjects[key]?.name || 'Unknown'] = parsedTakes[key];
               return acc;
             }, {} as Record<string, number>),
           };
@@ -48,21 +48,21 @@ export async function GET(req: Request) {
     return new Response(JSON.stringify(processedAssessments), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching assessments:", error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 }
 
-const subjectname = async (takes: Takes) => {
+const getSubjectNames = async (takes: Takes) => {
   try {
     const ids = Object.keys(takes.takes);
 
@@ -90,9 +90,10 @@ const subjectname = async (takes: Takes) => {
 
     return mappedTakes;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching subject names:", error);
     return {};
   }
 };
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
+
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';

@@ -60,8 +60,8 @@ const Assessments = () => {
 
   return (
     <div>
-      <div>
-        <h1>Create Test</h1>
+      <div className="justify-center items-center">
+        <h1 className="font-bold text-3xl text-center mb-4">Create Assessment</h1>
       </div>
       <div>
         <form className="max-w-sm mx-auto">

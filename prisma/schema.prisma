@@ -45,6 +45,13 @@ model User {
   saverecords       SaveRecord[]
 }
 
+model FetchedQuestion {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  assessmentName String
+  questionId     String
+  createdAt      DateTime @default(now())
+}
+
 model SaveRecord {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   Percentage    String
@@ -152,6 +159,7 @@ model Assessment {
   duration       Int?
   takes          Json
   Subcatname     String?
+  Subcatid       String               @unique
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
 }

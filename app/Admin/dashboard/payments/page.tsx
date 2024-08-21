@@ -156,6 +156,7 @@ const Payments = () => {
                       <p>Father&apos;s Name: {application.FatherName}</p>
                       <p>Gender: {application.Gender}</p>
                       <p>Email: {application.Email}</p>
+                      <p>Mobile:{application.MobileNumber}</p>
                     </div>
                   )}
                 </td>

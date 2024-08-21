@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       });
     });
 
-    await prisma.subcategoryQuestions.createMany({
+    await prisma.subjectQuestions.createMany({
       data: records.map((record) => ({
         questionName: record.questionName,
         awnsers: [
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         correctAwnser: record.correctAwnser,
         createdAt: new Date(record.createdAt),
         updatedAt: new Date(record.updatedAt),
-        subcategoryId: record.subcategoryId,
+        subjectsId: record.subjectsId,
       })),
     });
 

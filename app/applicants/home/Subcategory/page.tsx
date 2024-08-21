@@ -51,7 +51,7 @@ const Subcategory: React.FC<PageProps> = (props) => {
     <div key={item.id} className="w-full grid-cols-1 sm:grid-cols-2 mt-4">
       <section className="flex gap-2">
         <div className="mt-2 rounded-xl bg-white w-[7px] h-[7px]"></div>
-        <Link href={{ pathname: `/applicants/assessment/Test`, query: { name: item.name } }} passHref>
+        <Link href={{ pathname: `/applicants/assessment/Test`, query: { id: item.id } }} passHref>
           <p className="break-words whitespace-normal text-sm sm:text-base md:text-sm lg:text-sm max-w-xs cursor-pointer">
             {item.name}
           </p>

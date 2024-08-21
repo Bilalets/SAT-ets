@@ -80,6 +80,7 @@ toast.error("Total percentage should not exceed 100%.")
           takes: assessmentData,
           duration: testDuration,
           totalquestions: total,
+          Subcatid:props.id.toString()
         });
         toast.success("Assessment Created Successfully");
       } catch (error) {
@@ -139,7 +140,7 @@ toast.error("Total percentage should not exceed 100%.")
             </tr>
           </thead>
           <tbody>
-            {getsubjects?.map((subject) => (
+            {getsubjects?.map((subject,index) => (
               <tr
                 key={subject.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
@@ -148,7 +149,7 @@ toast.error("Total percentage should not exceed 100%.")
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  {subject.name}
+                 ({index+1}) {subject.name} 
                 </th>
                 <td className="px-6 py-4">
                   <input
