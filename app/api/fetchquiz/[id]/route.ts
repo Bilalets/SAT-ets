@@ -1,8 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-
-
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
@@ -23,7 +21,7 @@ export async function GET(
     }
 
     const assessment = await prisma.assessment.findUnique({
-      where: { Subcatid:id },
+      where: { Subcatid: id },
     });
 
     if (!assessment) {
@@ -75,14 +73,23 @@ export async function GET(
       }
     });
 
+    // Keep track of fetched question IDs to avoid duplication
+    const fetchedQuestionIds: Set<string> = new Set();
+
     const fetchRandomQuestions = async (subjectId: string, questionCount: number) => {
-      // Fetch twice the number of questions required to ensure randomness
       const subjectQuestions = await prisma.subjectQuestions.findMany({
-        where: { subjectsId: subjectId },
-        take: questionCount * 2,
+        where: {
+          subjectsId: subjectId,
+          id: { notIn: Array.from(fetchedQuestionIds) },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: questionCount,
       });
 
-      return shuffleArray(subjectQuestions).slice(0, questionCount);
+      // Add fetched question IDs to the set to prevent re-fetching
+      subjectQuestions.forEach(question => fetchedQuestionIds.add(question.id));
+
+      return subjectQuestions;
     };
 
     const questions = await Promise.all(

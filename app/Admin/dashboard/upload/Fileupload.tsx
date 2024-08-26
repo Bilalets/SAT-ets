@@ -2,11 +2,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Button } from 'flowbite-react';
-
-const FileUpload: React.FC = () => {
+import { Button,} from 'flowbite-react';
+import { Upload } from 'lucide-react';
+interface FileUploadProps {
+  id: string|undefined;
+}
+const FileUpload: React.FC <FileUploadProps> = ({id}) => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -15,13 +19,14 @@ const FileUpload: React.FC = () => {
   };
 
   const handleUpload = async () => {
-    if (!file) {
-      toast.error('Please select a file to upload.');
+    if (!file || !id) {
+      toast.error('Please select a file and choose subject');
       return;
     }
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('subjectsId', id);
 
     setLoading(true);
 
@@ -41,16 +46,10 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1 className=' justify-center flex'>Upload CSV File (Check the 
-       Format Before Uploading)</h1>
-       <div className='flex flex-row justify-center'>
-       <input type="file" accept=".csv" onChange={handleFileChange} />
-      <Button  color="dark" onClick={handleUpload} disabled={loading}>
-        {loading ? 'Uploading...' : 'Upload'}
-      </Button>
-       </div>
-   
+    <div className='flex flex-row' >
+
+<input onChange={handleFileChange} type='file'/>
+<button onClick={handleUpload} className='text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'>Upload</button>
     </div>
   );
 };

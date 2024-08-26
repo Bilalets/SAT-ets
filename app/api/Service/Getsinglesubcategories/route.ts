@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       select: {
         name: true,
         id: true,
-        subject: true,
+       
         isShown: true,
       },
     });

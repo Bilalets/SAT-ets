@@ -5,9 +5,10 @@ import prisma from '../../libs/prismadb';
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const file = formData.get('file') as Blob;
+  const subjectsId = formData.get('subjectsId') as string;
 
-  if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+  if (!file || !subjectsId) {
+    return NextResponse.json({ error: 'No file or subjectsId provided' }, { status: 400 });
   }
 
   const data = await file.text();
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
         correctAwnser: record.correctAwnser,
         createdAt: new Date(record.createdAt),
         updatedAt: new Date(record.updatedAt),
-        subjectsId: record.subjectsId,
+        subjectsId: subjectsId, // Use subjectsId from the form data
       })),
     });
 

@@ -25,6 +25,7 @@ import {
 } from "react-pro-sidebar";
 import Slider from "react-slick";
 import FileUpload from "./Fileupload";
+import Test from "./Test";
 type QuestionRequestData = {
   questionName: string | undefined;
   awnsers: (string | undefined)[];
@@ -237,9 +238,12 @@ const [displaySubject,setSubject]=useState<Subject>()
       toast.error("Failed to save question.");
     }
   };
+  
   return (
     <>
-     <FileUpload/>
+   <Test/>
+    {/* {displaySubject?.id && <FileUpload id={displaySubject?.id}/>}
+    
       <div className="flex flex-row m-5">
       
       </div>
@@ -292,7 +296,7 @@ const [displaySubject,setSubject]=useState<Subject>()
         
         </div>
       </div>
-      {displaySubject && (<h1 className="ml-4 mb-8">Copy subject Id:{displaySubject.id}</h1>)}
+      
       <div className="flex flex-row gap-16  ">
         <div className=" text-center w-[250px] h-[530px]  ml-20 bg-white mb-10 shadow border-1 overflow-scroll ">
           <div className=" flex flex-row gap-6 h-[50px] bg-gray-800 text-white justify-center items-center ">
@@ -429,7 +433,7 @@ const [displaySubject,setSubject]=useState<Subject>()
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

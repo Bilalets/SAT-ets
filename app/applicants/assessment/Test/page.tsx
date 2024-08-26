@@ -2,11 +2,13 @@
 import clsx from 'clsx';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { Button, Spinner } from 'flowbite-react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import useAppContext from '@/app/store/user';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import StartPop from '../Startpopup/startpop';
+
 
 interface AssessmentQuestion {
   id: string;
@@ -39,6 +41,7 @@ const MyAssessment = () => {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const router=useRouter()
   const [result, setResult] = useState({
     score: 0,
     correctAnswers: 0,
@@ -47,7 +50,20 @@ const MyAssessment = () => {
 
   // Timer state initialized with assessment duration from API response
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!showResult) {
+        event.preventDefault();
+        
+      }
+    };
 
+    window.addEventListener('popstate', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handleBeforeUnload);
+    };
+  }, [showResult]);
   useEffect(() => {
     const fetchAssessment = async () => {
       if (!subjectname) {
@@ -164,6 +180,7 @@ const MyAssessment = () => {
   }
 
   return (
+
     <div className="w-full h-screen overflow-hidden">
       <div className="flex-col justify-center text-center mt-10">
         <p className="text-2xl"> Test Assessment</p>
@@ -214,13 +231,20 @@ const MyAssessment = () => {
         <div className="flex justify-center mt-4">
           <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
             <div className="p-10 w-full">
+              <p className="text-xl">Thank you</p>
               <p className="text-xl">Result:</p>
               <p>Percentage: {((result.correctAnswers / assessment.questions.length) * 100).toFixed(0)}%</p>
               <p>Correct Answers: {result.correctAnswers}</p>
               <p>Wrong Answers: {result.wrongAnswers}</p>
+              <div className='flex flex-row gap-3'>
               <Button onClick={resetQuiz} pill color="dark" className="mt-5">
                 Restart Quiz
               </Button>
+              <Button href='/applicants/home' pill color="dark" className="mt-5">
+                Back To Home
+              </Button>
+              </div>
+            
             </div>
           </div>
         </div>
@@ -230,9 +254,23 @@ const MyAssessment = () => {
 };
 
 const AssessmentPage = () => {
+ 
+  const [testStarted, setTestStarted] = useState(false);
+
+  const handleStart = () => {
+    setTestStarted(true);
+  };
+
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <MyAssessment />
+      {testStarted ? (
+        <Suspense fallback={<div>Loading...</div>}>
+          <MyAssessment />
+        </Suspense>
+      ) : (
+        <StartPop onStart={handleStart} />
+      )}
     </Suspense>
   );
 };

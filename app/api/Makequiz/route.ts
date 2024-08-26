@@ -5,14 +5,14 @@ interface TestRec {
   takes: Record<string, number>;
   duration: number;
   totalquestions: number;
-  Subcatname:string
-  Subcatid:string
+  Subcatname: string;
+  Subcatid: string;
 }
 
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as TestRec;
-    const { name, takes, duration, totalquestions,Subcatname,Subcatid } = body;
+    const { name, takes, duration, totalquestions, Subcatname, Subcatid } = body;
 
     // Check if an assessment with the same name already exists
     const existingAssessment = await prisma.assessment.findUnique({
@@ -37,9 +37,9 @@ export async function POST(req: Request) {
         name: name,
         takes: takes,
         duration: duration,
-        Subcatname:Subcatname,
+        Subcatname: Subcatname,
         totalquestions: totalquestions,
-        Subcatid:Subcatid,
+        Subcatid: Subcatid,
       },
     });
 
@@ -64,4 +64,5 @@ export async function POST(req: Request) {
     });
   }
 }
-export const fetchCache = 'force-no-store'
+
+export const fetchCache = 'force-no-store';

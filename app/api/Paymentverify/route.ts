@@ -18,7 +18,8 @@ export async function GET(req: Request) {
         Province:true,
         City:true,
         isViewed:true,
-        registrationNumber:true
+        registrationNumber:true,
+      
        
       },
     orderBy:{

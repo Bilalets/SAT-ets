@@ -15,7 +15,7 @@ export async function GET(req: Request) {
         duration: true,
         Subcatname: true,
         totalquestions: true,
-        Subcatid: true
+        Subcatid: true,
       },
     });
 

@@ -14,6 +14,8 @@ import {
 
   Pen,
   BadgeCheck,
+  Pencil,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -70,14 +72,24 @@ const Admin_navbar = () => {
             </MenuItem>
 
             <hr />
-
-            <MenuItem
+<SubMenu
+label='Question Bank'
+icon={<BookOpen/>}>
+<MenuItem
               icon={<Upload />}
               component={<Link href="/Admin/dashboard/upload" />}
             >
-              Question Bank
+             Upload Questions
             </MenuItem>
-
+            <hr />
+            <MenuItem
+              icon={<Pencil/>}
+              component={<Link href="/Admin/dashboard/editqb" />}
+            >
+              Edit Question Bank
+            </MenuItem>
+</SubMenu>
+           
             <hr />
             <SubMenu
               label="Create Assessment"
