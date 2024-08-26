@@ -1,16 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../../../libs/prismadb";
+import { Prisma } from "@prisma/client";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+interface Takes {
+  takes: Record<string, number>;
+}
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id;
 
     if (!id) {
       return new Response(
-        JSON.stringify({ error: "Assessment name is required" }),
+        JSON.stringify({ error: "Assessment ID is required" }),
         {
           status: 400,
           headers: {
@@ -82,8 +83,7 @@ export async function GET(
           subjectsId: subjectId,
           id: { notIn: Array.from(fetchedQuestionIds) },
         },
-        orderBy: { createdAt: 'desc' },
-        take: questionCount,
+        take: questionCount * 2, // Fetch double the required amount to ensure enough questions
       });
 
       // Add fetched question IDs to the set to prevent re-fetching
@@ -107,6 +107,25 @@ export async function GET(
 
     let flattenedQuestions = questions.flat();
     flattenedQuestions = shuffleArray(flattenedQuestions).slice(0, totalquestions);
+
+    // If fewer questions were fetched than required, fetch additional ones
+    if (flattenedQuestions.length < totalquestions) {
+      const additionalQuestionsNeeded = totalquestions - flattenedQuestions.length;
+      const additionalQuestions = await prisma.subjectQuestions.findMany({
+        where: {
+          id: { notIn: Array.from(fetchedQuestionIds) },
+        },
+        take: additionalQuestionsNeeded,
+      });
+
+      flattenedQuestions = [...flattenedQuestions, ...additionalQuestions.map((question) => ({
+        questionId: question.id,
+        questionName: question.questionName,
+        answers: question.awnsers,
+        correctAnswer: question.correctAwnser,
+        subjectsId: question.subjectsId!,
+      }))];
+    }
 
     return new Response(
       JSON.stringify({
