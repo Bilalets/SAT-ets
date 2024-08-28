@@ -80,7 +80,7 @@ const MyAssessment = () => {
 
   const savetestresult = useCallback(async () => {
     try {
-      const percentage = ((result.correctAnswers / (assessment?.questions.length || 1)) * 100).toFixed(0);
+      const percentage = ((result.correctAnswers / (assessment?.questions.length || 1)) * 100).toFixed(2);
       await axios.post('/api/Usertestrecord/Savetestdata', {
         userId: getData?.id,
         Percentage: percentage,
@@ -254,20 +254,38 @@ const MyAssessment = () => {
         <div className="flex justify-center mt-4">
           <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
             <div className="p-10 w-full">
-              <p className="text-xl font-semibold text-center">Result</p>
-              <p>Total Questions: <span className="font-medium">{assessment.questions.length}</span></p>
-              <p>Correct Answers: <span className="font-medium">{result.correctAnswers}</span></p>
-              <p>Wrong Answers: <span className="font-medium">{result.wrongAnswers}</span></p>
-              <p>Your Score: <span className="font-medium">{result.score} %</span></p>
+              <p>Result</p>
+              <p>
+                Overall {(result.correctAnswers / assessment.questions.length) * 100}%
+              </p>
+              <p>
+                Total Question: <span className="font-bold">{assessment.questions.length}</span>
+              </p>
+              <p>
+                Correct Answer: <span className="font-bold">{result.correctAnswers}</span>
+              </p>
+              <p>
+                Wrong Answer: <span className="font-bold">{result.wrongAnswers}</span>
+              </p>
               <div className='flex flex-row gap-2'>
-              <Button onClick={resetQuiz} color="dark" pill className="mt-5">
-                Restart Quiz
+              <Button
+                pill
+                color="dark"
+                className="mt-5 mb-5 float-right"
+                onClick={resetQuiz}
+              >
+                Restart
               </Button>
-              <Button href={'/applicants/home'}  color="dark" pill className="mt-5">
-              Go Back to Home
+              <Button
+                pill
+                color="dark"
+                className="mt-5 mb-5 float-right"
+             href={'/applicants/home'}
+              >
+              Back To Home
               </Button>
               </div>
-          
+      
             </div>
           </div>
         </div>
