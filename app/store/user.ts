@@ -49,12 +49,14 @@ interface Category {
   Prep: string;
   Subs: string[];
   subcategory: Subcategory[];
+  isShown:boolean;
 }
 
 interface Test {
   id: string;
   name: string;
   category: Category[];
+  isShown:boolean;
 }
 
 // Create the store using zustand

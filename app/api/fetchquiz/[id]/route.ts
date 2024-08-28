@@ -37,11 +37,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       );
     }
 
-    const takes: Record<string, number> = assessment.takes as Record<string, number>;
-
-    if (!takes) {
+    const { totalquestions, takes } = assessment;
+    if (!totalquestions || !takes) {
       return new Response(
-        JSON.stringify({ error: "Assessment takes configuration is missing or invalid" }),
+        JSON.stringify({ error: "Assessment details are missing or invalid" }),
         {
           status: 400,
           headers: {
@@ -51,22 +50,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       );
     }
 
-    const { totalquestions } = assessment;
-
-    if (!totalquestions) {
-      return new Response(
-        JSON.stringify({ error: "Assessment totalquestions is missing or invalid" }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
+    // Type assertion for `takes`
     const questionsPerSubject: Record<string, number> = {};
-    Object.entries(takes).forEach(([subjectId, percentTake]) => {
+    Object.entries(takes as Prisma.JsonObject).forEach(([subjectId, percentTake]) => {
       if (typeof percentTake === 'number') {
         questionsPerSubject[subjectId] = Math.ceil((percentTake / 100) * totalquestions);
       } else {
@@ -74,29 +60,31 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       }
     });
 
-    // Keep track of fetched question IDs to avoid duplication
+    // Track fetched question IDs to avoid duplication
     const fetchedQuestionIds: Set<string> = new Set();
 
-    const fetchRandomQuestions = async (subjectId: string, questionCount: number) => {
-      const subjectQuestions = await prisma.subjectQuestions.findMany({
-        where: {
-          subjectsId: subjectId,
-          id: { notIn: Array.from(fetchedQuestionIds) },
-        },
-        take: questionCount * 2, // Fetch double the required amount to ensure enough questions
-      });
-
-      // Add fetched question IDs to the set to prevent re-fetching
-      subjectQuestions.forEach(question => fetchedQuestionIds.add(question.id));
-
-      return subjectQuestions;
-    };
-
+    // Fetch random questions for each subject using the MongoDB $sample aggregation
     const questions = await Promise.all(
-      Object.entries(questionsPerSubject).map(async ([id, take]) => {
-        const subjectQuestions = await fetchRandomQuestions(id, take);
-        return subjectQuestions.map((question) => ({
-          questionId: question.id,
+      Object.entries(questionsPerSubject).map(async ([subjectId, questionCount]) => {
+        const subjectQuestions = await prisma.subjectQuestions.aggregateRaw({
+          pipeline: [
+            { $match: { subjectsId: subjectId } },
+            { $match: { _id: { $nin: Array.from(fetchedQuestionIds) } } },
+            { $sample: { size: questionCount } }
+          ],
+        });
+
+        // Ensure subjectQuestions is an array and not null or undefined
+        if (!Array.isArray(subjectQuestions)) {
+          console.error(`No questions found for subject ${subjectId}`);
+          return [];
+        }
+
+        // Add fetched question IDs to the set to prevent re-fetching
+        subjectQuestions.forEach((question: any) => fetchedQuestionIds.add(question._id));
+
+        return subjectQuestions.map((question: any) => ({
+          questionId: question._id,
           questionName: question.questionName,
           answers: question.awnsers,
           correctAnswer: question.correctAwnser,
@@ -106,25 +94,30 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     );
 
     let flattenedQuestions = questions.flat();
-    flattenedQuestions = shuffleArray(flattenedQuestions).slice(0, totalquestions);
 
     // If fewer questions were fetched than required, fetch additional ones
     if (flattenedQuestions.length < totalquestions) {
       const additionalQuestionsNeeded = totalquestions - flattenedQuestions.length;
-      const additionalQuestions = await prisma.subjectQuestions.findMany({
-        where: {
-          id: { notIn: Array.from(fetchedQuestionIds) },
-        },
-        take: additionalQuestionsNeeded,
+      const additionalQuestions = await prisma.subjectQuestions.aggregateRaw({
+        pipeline: [
+          { $match: { _id: { $nin: Array.from(fetchedQuestionIds) } } },
+          { $sample: { size: additionalQuestionsNeeded } }
+        ],
       });
 
-      flattenedQuestions = [...flattenedQuestions, ...additionalQuestions.map((question) => ({
-        questionId: question.id,
-        questionName: question.questionName,
-        answers: question.awnsers,
-        correctAnswer: question.correctAwnser,
-        subjectsId: question.subjectsId!,
-      }))];
+      // Ensure additionalQuestions is an array and not null or undefined
+      if (Array.isArray(additionalQuestions)) {
+        flattenedQuestions = [
+          ...flattenedQuestions,
+          ...additionalQuestions.map((question: any) => ({
+            questionId: question._id,
+            questionName: question.questionName,
+            answers: question.awnsers,
+            correctAnswer: question.correctAwnser,
+            subjectsId: question.subjectsId!,
+          })),
+        ];
+      }
     }
 
     return new Response(
@@ -153,8 +146,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     );
   }
 }
-
-export const fetchCache = 'force-no-store';
 
 // Utility function to shuffle array elements
 const shuffleArray = <T>(array: T[]): T[] => {

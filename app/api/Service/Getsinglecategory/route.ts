@@ -20,6 +20,7 @@ export async function POST(req: Request) {
         id: true,
         backgroundColor:true,
         textColor:true,
+        isShown:true
         
         
       },

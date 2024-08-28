@@ -19,17 +19,19 @@ const Home = () => {
       ) : (
         <div className="relative">
           <div className="flex flex-col gap-5 justify-center mt-10 ml-1">
-            {allServicesData?.map((item) => (
-              <div key={item.id}>
-                <div className="inline-block px-7 text-xl border bg-white p-4 rounded-lg shadow">
-                  <div className="flex justify-between gap-4">
-                    <span>{item.name}</span>
-                    <ArrowDownRight />
+            {allServicesData?.map((item) =>
+              item.isShown ? (
+                <div key={item.id}>
+                  <div className="inline-block px-7 text-xl border bg-white p-4 rounded-lg shadow">
+                    <div className="flex justify-between gap-4">
+                      <span>{item.name}</span>
+                      <ArrowDownRight />
+                    </div>
                   </div>
+                  <Category name={item.name} id={item.id} />
                 </div>
-                <Category name={item.name} id={item.id} />
-              </div>
-            ))}
+              ) : null
+            )}
           </div>
         </div>
       )}
@@ -38,4 +40,4 @@ const Home = () => {
 };
 
 export default Home;
-export const fetchCache = 'force-no-store';
+export const fetchCache = "force-no-store";

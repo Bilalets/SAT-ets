@@ -59,7 +59,7 @@ const Navbar = () => {
     <nav className="w-full p-5 bg-white z-10 relative shadow-lg lg:p-5 md:p-5">
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-2xl font-semibold">S A T</p>
+          <p className="text-2xl font-semibold">Self Assessment - SAT</p>
         </div>
         <div className="block lg:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-gray-800">

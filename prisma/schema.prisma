@@ -70,6 +70,7 @@ model Service {
   name      String
   category  Category[]
   createdAt DateTime   @default(now())
+  isShown   Boolean?
 }
 
 model Category {
@@ -85,6 +86,7 @@ model Category {
   Subs            String[]      @default([])
   backgroundColor String?
   textColor       String?
+  isShown         Boolean?
 }
 
 model Subcategory {

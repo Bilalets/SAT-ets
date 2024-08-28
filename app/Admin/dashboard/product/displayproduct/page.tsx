@@ -39,12 +39,14 @@ interface Category {
   id: string;
   name: string;
   subcategory: Subcategory[];
+  isShown:boolean
 }
 
 interface Test {
   id: string;
   name: string;
   category: Category[];
+  isShown:boolean 
 }
 
 const DisplayProduct = () => {
@@ -459,6 +461,37 @@ const handleCloseModal3=()=>{
       console.log(error);
     }
   };
+
+  const updateserdisplay=async (SerID: string) => {
+   
+
+    try {
+      await axios.put("/api/hideshowservice", {
+        
+        id: SerID,
+      });
+      toast.success("Service Updated Successfully");
+      await fetchData();
+    } catch (error) {
+      toast.error("Error Updating ");
+      console.log(error);
+    }
+  };
+  const updatecatdisplay=async (SerID: string) => {
+   
+
+    try {
+      await axios.put("/api/hideshowcategory", {
+        
+        id: SerID,
+      });
+      toast.success("Category Updated Successfully");
+      await fetchData();
+    } catch (error) {
+      toast.error("Error Updating ");
+      console.log(error);
+    }
+  };
   const updatesubjects = async (SerID: string) => {
     let updatedsubjectname = prompt("Enter New Category Name");
     if (updatedsubjectname) {
@@ -559,10 +592,24 @@ const handleCloseModal3=()=>{
                   <ArrowDown />
                 )}
                 {Seritem.name}
+
                 <div className=" flex flex-row  gap-5">
                   <PenIcon onClick={() => updateserv(Seritem.id)} />
                   <Trash2Icon onClick={() => deleteservicee(Seritem.id)} />
+                  <label className="relative inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    checked={Seritem.isShown}
+    className="sr-only peer"
+    onChange={() => updateserdisplay(Seritem.id)}
+  />
+  <div className="group peer ring-0 bg-rose-400 rounded-full outline-none duration-300 after:duration-300 w-16 h-8 shadow-md peer-checked:bg-emerald-500 peer-focus:outline-none after:content-['✖️'] after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-6 after:w-6 after:top-1 after:left-1 after:-rotate-180 after:flex after:justify-center after:items-center peer-checked:after:translate-x-8 peer-checked:after:content-['✔️'] peer-hover:after:scale-95 peer-checked:after:rotate-0">
+  </div>
+</label>
+
+
                 </div>
+              
               </div>
 
               {openDropdownIndex === serviceIndex && (
@@ -715,6 +762,11 @@ const handleCloseModal3=()=>{
                             <Trash2Icon
                               onClick={() => deletecat(category.id)}
                             />
+                                            <label className="relative inline-flex items-center cursor-pointer">
+  <input type="checkbox" value="" checked={category.isShown} className="sr-only peer" onChange={()=>updatecatdisplay(category.id)}/>
+  <div className="group peer ring-0 bg-rose-400 rounded-full outline-none duration-300 after:duration-300 w-16 h-8 shadow-md peer-checked:bg-emerald-500 peer-focus:outline-none after:content-['✖️'] after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-6 after:w-6 after:top-1 after:left-1 after:-rotate-180 after:flex after:justify-center after:items-center peer-checked:after:translate-x-8 peer-checked:after:content-['✔️'] peer-hover:after:scale-95 peer-checked:after:rotate-0">
+  </div>
+</label>
                           </div>
                         </div>
 

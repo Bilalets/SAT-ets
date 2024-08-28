@@ -6,7 +6,7 @@ export async function GET(req: Request) {
       select: {
         id: true,
         name: true,
-       
+       isShown:true
       },
     });
     return Response.json(allService);

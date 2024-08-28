@@ -1,14 +1,13 @@
-'use client'
+'use client';
+
 import clsx from 'clsx';
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Spinner } from 'flowbite-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useAppContext from '@/app/store/user';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
-import StartPop from '../Startpopup/startpop';
-
 
 interface AssessmentQuestion {
   id: string;
@@ -33,15 +32,13 @@ interface Assessment {
 }
 
 const MyAssessment = () => {
-  const searchParams = useSearchParams();
-  const subjectname = searchParams.get("id");
   const { getData } = useAppContext();
+  const router = useRouter();
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const router=useRouter()
   const [result, setResult] = useState({
     score: 0,
     correctAnswers: 0,
@@ -50,22 +47,12 @@ const MyAssessment = () => {
 
   // Timer state initialized with assessment duration from API response
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!showResult) {
-        event.preventDefault();
-        
-      }
-    };
 
-    window.addEventListener('popstate', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('popstate', handleBeforeUnload);
-    };
-  }, [showResult]);
   useEffect(() => {
     const fetchAssessment = async () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const subjectname = searchParams.get("id");
+
       if (!subjectname) {
         setError('No subject name provided');
         return;
@@ -89,7 +76,7 @@ const MyAssessment = () => {
     };
 
     fetchAssessment();
-  }, [subjectname]);
+  }, []);
 
   const savetestresult = useCallback(async () => {
     try {
@@ -99,15 +86,15 @@ const MyAssessment = () => {
         Percentage: percentage,
         Wrongawn: result.wrongAnswers.toString(),
         Correctawn: result.correctAnswers.toString(),
-        subjectname: subjectname,
-        Totalquestion:assessment?.questions.length.toString()
+        subjectname: new URLSearchParams(window.location.search).get("id"),
+        Totalquestion: assessment?.questions.length.toString()
       });
       toast.success('Quiz Result Saved Successfully');
     } catch (error) {
       console.error('Error saving quiz result:', error);
       toast.error('Failed to save quiz result. Please try again.');
     }
-  }, [result, assessment?.questions.length, getData?.id, subjectname]);
+  }, [result, assessment?.questions.length, getData?.id]);
 
   useEffect(() => {
     if (showResult) {
@@ -139,6 +126,31 @@ const MyAssessment = () => {
     return () => clearInterval(timer);
   }, [timeLeft, assessment, activeQuestion]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!showResult) {
+        event.preventDefault();
+        event.returnValue = ''; 
+        savetestresult();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && !showResult) {
+        savetestresult();
+        router.replace('/applicants/home');
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [showResult, savetestresult, router]);
+
   const handleAnswerClick = (answer: string, index: number) => {
     setSelectedAnswerIndex(index);
     const isCorrect = answer === assessment?.questions[activeQuestion].correctAnswer;
@@ -168,22 +180,33 @@ const MyAssessment = () => {
   };
 
   if (error) {
-    return <div className='flex justify-center items-center h-screen' ><Image src="/images/red.png" className=' rounded-lg' alt='img' width={500} height={500}/></div>;
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <Image src="/images/red.png" className='rounded-lg' alt='img' width={500} height={500} />
+      </div>
+    );
   }
 
   if (!assessment) {
-    return <div className="flex justify-center items-center h-screen"><Spinner /></div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   if (assessment.questions.length === 0) {
-    return <div className="text-center">No assessment found</div>;
+    return (
+      <div className="text-center">
+        No assessment found
+      </div>
+    );
   }
 
   return (
-
     <div className="w-full h-screen overflow-hidden">
       <div className="flex-col justify-center text-center mt-10">
-        <p className="text-2xl"> Test Assessment</p>
+        <p className="text-2xl">Test Assessment</p>
         {showResult ? (
           <p>Time Up</p>
         ) : (
@@ -199,8 +222,8 @@ const MyAssessment = () => {
         <div className="flex justify-center mt-4">
           <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
             <div className="p-10 w-full">
-              <p>Q: {assessment.questions[activeQuestion].questionName}</p>
-              <ul className="pl-0">
+              <p style={{ userSelect: 'none' }}>Q: {assessment.questions[activeQuestion].questionName}</p>
+              <ul className="pl-0" style={{ userSelect: 'none' }}>
                 {assessment.questions[activeQuestion].answers.map((answer, index) => (
                   <li key={index} className="mt-3">
                     <button
@@ -220,7 +243,7 @@ const MyAssessment = () => {
                 pill
                 color="dark"
                 className="mt-5 mb-5 float-right"
-                disabled={selectedAnswerIndex === null && timeLeft !== null && timeLeft > 0}
+                disabled={selectedAnswerIndex === null && timeLeft !== null}
               >
                 {activeQuestion === assessment.questions.length - 1 ? 'Finish' : 'Next'}
               </Button>
@@ -231,20 +254,14 @@ const MyAssessment = () => {
         <div className="flex justify-center mt-4">
           <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
             <div className="p-10 w-full">
-              <p className="text-xl">Thank you</p>
-              <p className="text-xl">Result:</p>
-              <p>Percentage: {((result.correctAnswers / assessment.questions.length) * 100).toFixed(0)}%</p>
-              <p>Correct Answers: {result.correctAnswers}</p>
-              <p>Wrong Answers: {result.wrongAnswers}</p>
-              <div className='flex flex-row gap-3'>
-              <Button onClick={resetQuiz} pill color="dark" className="mt-5">
-                Restart Quiz
+              <p className="text-xl font-semibold text-center">Result</p>
+              <p>Total Questions: <span className="font-medium">{assessment.questions.length}</span></p>
+              <p>Correct Answers: <span className="font-medium">{result.correctAnswers}</span></p>
+              <p>Wrong Answers: <span className="font-medium">{result.wrongAnswers}</span></p>
+              <p>Your Score: <span className="font-medium">{result.score}</span></p>
+              <Button onClick={resetQuiz} color="dark" pill className="mt-5">
+                Retake Quiz
               </Button>
-              <Button href='/applicants/home' pill color="dark" className="mt-5">
-                Back To Home
-              </Button>
-              </div>
-            
             </div>
           </div>
         </div>
@@ -253,26 +270,4 @@ const MyAssessment = () => {
   );
 };
 
-const AssessmentPage = () => {
- 
-  const [testStarted, setTestStarted] = useState(false);
-
-  const handleStart = () => {
-    setTestStarted(true);
-  };
-
-
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      {testStarted ? (
-        <Suspense fallback={<div>Loading...</div>}>
-          <MyAssessment />
-        </Suspense>
-      ) : (
-        <StartPop onStart={handleStart} />
-      )}
-    </Suspense>
-  );
-};
-
-export default AssessmentPage;
+export default MyAssessment;
