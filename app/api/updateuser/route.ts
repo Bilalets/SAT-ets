@@ -8,12 +8,13 @@ interface UserUpdateData {
   phoneNumber: string;
   password?: string;
   dateofBirth: string;
+  userpicture:string
 }
 
 export async function PUT(req: Request) {
   try {
     const body = await req.json() as UserUpdateData;
-    const { name, fatherName, email, phoneNumber, password, dateofBirth } = body;
+    const { name, fatherName, email, phoneNumber, password, dateofBirth , userpicture} = body;
 
     // Hash the password if provided
     let hashedPassword;
@@ -30,6 +31,7 @@ export async function PUT(req: Request) {
         fatherName,
         phoneNumber,
         dateofBirth,
+        userpicture,
         ...(hashedPassword && { password: hashedPassword }), // Only update password if it's provided
       },
     });

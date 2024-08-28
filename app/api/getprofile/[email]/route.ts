@@ -20,7 +20,8 @@ export async function GET(
         city:true,
         phoneNumber:true,
         dateofBirth:true,
-        Cnic:true
+        Cnic:true,
+        userpicture:true
         
       },
     });

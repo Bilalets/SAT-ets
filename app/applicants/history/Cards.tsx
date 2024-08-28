@@ -139,7 +139,7 @@ console.log(userData)
                 </Table.Head>
                 <Table.Body>
                   <Table.Row>
-                    <Table.Cell className="px-2 py-1 sm:px-4 sm:py-2">{item.Percentage}%</Table.Cell>
+                    <Table.Cell className="px-2 py-1 sm:px-4 sm:py-2">  {parseFloat(item.Percentage).toFixed(0)}%</Table.Cell>
                     <Table.Cell className="px-2 py-1 sm:px-4 sm:py-2">{item.subjectname}</Table.Cell>
                     <Table.Cell className="px-2 py-1 sm:px-4 sm:py-2">{item.Wrongawn}</Table.Cell>
                     <Table.Cell className="px-2 py-1 sm:px-4 sm:py-2">{item.Correctawn}</Table.Cell>
@@ -165,19 +165,26 @@ console.log(userData)
           show={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         >
-           <div id="pdf-content" className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-              <div className="flex justify-between items-center mb-4">
-                <div>
-                  <Image src={'/images/ETS.png'} width={100} height={100} alt="image"/>
-                  <h1 className="text-lg  font-bold mt-2">Eagle Testing Service </h1>
-                  <h2 className="mt-2 text-xl font-bold">RESULT CARD</h2>
+           <div id="pdf-content" className="flex justify-center items-center  min-h-screen bg-gray-100">
+            <div className="bg-white p-6  shadow-lg w-[1000px] h-[700px] max-w-md">
+              <div className="flex  items-center mb-4">
+                <div className="flex gap-4 mt-6 justify-center flex-row">
+                  <Image className="ml-2" src={'/images/ETS.png'} width={80} height={80} alt="image"/>
+                  <div className="flex flex-col">
+                  <h1 className="  text-center  font-bold mt-2">Eagle Testing Service </h1>
+                  <h2 className="  text-center   font-bold">Self Assessment Test</h2>
+                  <h2 className=" text-center  font-bold">RESULT CARD</h2>
+                 
+                  </div>
+                  {userData.map((item,index)=>(      <div key={index}><Image key={index} src={item.userpicture} width={80} height={80} alt="image"/></div>    ))}
+        
                 </div>
               </div>
-              {userData.map((item,index)=>(  <div className="mb-4" key={index} >
+              {userData.map((item,index)=>(  <div className="mb-4 mt-10" key={index} >
                 <p><strong>Name: </strong>{item.name}</p>
                 <p><strong>Father Name: </strong>{item.fatherName}</p>
                 <p><strong>CNIC: </strong>{item.Cnic}</p>
+                
               </div>))}
             
               <div className="mb-4">
@@ -201,7 +208,7 @@ console.log(userData)
                 </table>
               </div>
               <div className="mb-4">
-                <h3 className="text-lg font-bold">Obtained Score Detail:</h3>
+                <h3 className=" font-bold">Obtained Score Detail:</h3>
                 <table className="w-full border mt-2">
                   <thead>
                     <tr>
@@ -221,7 +228,7 @@ console.log(userData)
                   </tbody>
                 </table>
               </div>
-            
+            <h1 className=" font-bold text-sm">Note: This Result Card is valid for 2 years from date of test</h1>
             </div>
           </div>
           <div className="flex justify-center mt-4">

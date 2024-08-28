@@ -1,22 +1,28 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { Pencil } from "lucide-react";
+import { Pencil, Upload } from "lucide-react";
 import { Spinner } from "flowbite-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { getEmail } from "@/app/libs/myeail";
-
+import { CldUploadWidget } from "next-cloudinary";
 const Profile: React.FC = () => {
   const [username, setName] = useState<string>();
   const [fatherName, setFatherName] = useState<string>();
   const [phoneNumber, setPhoneNumber] = useState<string>();
   const [dateOfBirth, setDateOfBirth] = useState<string>();
-  const [password, setPassword] = useState<string>("");
+  const [password, setPassword] = useState<string>();
   const [confirmPassword, setConfirmPassword] = useState<string>();
   const [userData, setUserData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [picImage, setImage] = useState<string>();
+  
+  const handleUploadSuccess = (result:any) => {
+    const imageUrl = result.info.secure_url; 
+    setImage(imageUrl);
+  };
 
   const userEmail = getEmail();
   const onSubmits = async () => {
@@ -31,6 +37,7 @@ const Profile: React.FC = () => {
       fatherName: fatherName,
       phoneNumber: phoneNumber,
       password: password,
+      userpicture:picImage
     };
   
     // Include dateOfBirth only if it's not an empty string
@@ -165,6 +172,26 @@ const Profile: React.FC = () => {
                   />
                 </div>
               </div>
+              <CldUploadWidget
+              uploadPreset="test_upload"
+              onSuccess={handleUploadSuccess}
+            >
+              {({ open }) => {
+                return (
+                  <div className=" mt-5 ">   
+                <button
+  className="flex gap-2 items-center justify-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+  onClick={() => open()}
+>
+  <Upload  />
+  Upload Profile Picture
+</button>
+
+                 </div>
+               
+                );
+              }}
+            </CldUploadWidget>
             </div>
           </div>
         </div>
@@ -172,13 +199,13 @@ const Profile: React.FC = () => {
           <button
             onClick={onSubmits}
             type="button"
-            className="text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 me-2 mb-2"
+            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
             Update
           </button>
           <button
             onClick={closeModel}
-            className="text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 me-2 mb-2"
+            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
           >
             Close
           </button>
@@ -222,8 +249,8 @@ const Profile: React.FC = () => {
 
                 <div className="flex justify-center sm:justify-end mt-4 sm:mt-0 sm:ml-6">
                   <Image
-                    src="/images/Avatar.jpg"
-                    className="h-32 w-32 rounded-full"
+                   src={item?.userpicture || "/images/Avatar.jpg"}
+                    className="h-32 w-32 rounded-full  object-cover"
                     alt="User Avatar"
                     width={128}
                     height={128}

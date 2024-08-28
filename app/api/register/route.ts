@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { add } from 'date-fns';
 import { sendVerificationEmail } from '../../libs/mailer';
-import prisma from '../../libs/prismadb'
+import prisma from '../../libs/prismadb';
 
 type User = {
   name: string;
@@ -17,6 +17,7 @@ type User = {
   emailVerified: boolean;
   role: Role;
   Cnic: string;
+  userpicture?: string; // Mark as optional
 };
 
 export async function POST(request: NextRequest) {
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
       dateofBirth,
       emailVerified,
       Cnic,
+      userpicture = "", // Default to empty string if undefined
       role = Role.applicant,
     } = body;
 
@@ -52,6 +54,7 @@ export async function POST(request: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const emailTokenExpiry = add(new Date(), { hours: 24 });
 
+    // Include userpicture with default empty string
     const userData = {
       name,
       city,
@@ -65,6 +68,7 @@ export async function POST(request: NextRequest) {
       role,
       verificationToken,
       emailTokenExpiry,
+      userpicture, // This is safe to include
     };
 
     const user = await prisma.user.create({
@@ -75,11 +79,10 @@ export async function POST(request: NextRequest) {
 
     return new NextResponse(
       JSON.stringify({ message: 'User created successfully. Please check your email to verify your account.', user }),
-      {
-        status: 201,
-      }
+      { status: 201 }
     );
   } catch (error: any) {
+    console.error('Internal server error:', error.message);
     return new NextResponse('Internal server error', { status: 500 });
   }
 }

@@ -8,6 +8,7 @@ import axios from 'axios';
 import useAppContext from '@/app/store/user';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import StartPop from '../Startpopup/startpop'; // Import the StartPop component
 
 interface AssessmentQuestion {
   id: string;
@@ -39,6 +40,7 @@ const MyAssessment = () => {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [testStarted, setTestStarted] = useState(false);
   const [result, setResult] = useState({
     score: 0,
     correctAnswers: 0,
@@ -52,7 +54,8 @@ const MyAssessment = () => {
     const fetchAssessment = async () => {
       const searchParams = new URLSearchParams(window.location.search);
       const subjectname = searchParams.get("id");
-
+     
+     
       if (!subjectname) {
         setError('No subject name provided');
         return;
@@ -86,7 +89,7 @@ const MyAssessment = () => {
         Percentage: percentage,
         Wrongawn: result.wrongAnswers.toString(),
         Correctawn: result.correctAnswers.toString(),
-        subjectname: new URLSearchParams(window.location.search).get("id"),
+        subjectname: new URLSearchParams(window.location.search).get("name"),
         Totalquestion: assessment?.questions.length.toString()
       });
       toast.success('Quiz Result Saved Successfully');
@@ -103,7 +106,7 @@ const MyAssessment = () => {
   }, [showResult, savetestresult]);
 
   useEffect(() => {
-    if (timeLeft === null || timeLeft <= 0) return;
+    if (timeLeft === null || timeLeft <= 0 || !testStarted) return; // Check if test has started
 
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
@@ -124,7 +127,7 @@ const MyAssessment = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, assessment, activeQuestion]);
+  }, [timeLeft, assessment, activeQuestion, testStarted]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -179,6 +182,10 @@ const MyAssessment = () => {
     setTimeLeft(assessment?.duration || null); // Reset timer
   };
 
+  const startTest = () => {
+    setTestStarted(true);
+  };
+
   if (error) {
     return (
       <div className='flex justify-center items-center h-screen'>
@@ -205,89 +212,94 @@ const MyAssessment = () => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <div className="flex-col justify-center text-center mt-10">
-        <p className="text-2xl">Test Assessment</p>
-        {showResult ? (
-          <p>Time Up</p>
-        ) : (
-          <div>
-            <p>
-              Question: {activeQuestion + 1} / {assessment.questions.length}
-            </p>
-            <p>{timeLeft !== null ? `${timeLeft} seconds remaining for current question` : ''}</p>
-          </div>
-        )}
-      </div>
-      {!showResult ? (
-        <div className="flex justify-center mt-4">
-          <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
-            <div className="p-10 w-full">
-              <p style={{ userSelect: 'none' }}>Q: {assessment.questions[activeQuestion].questionName}</p>
-              <ul className="pl-0" style={{ userSelect: 'none' }}>
-                {assessment.questions[activeQuestion].answers.map((answer, index) => (
-                  <li key={index} className="mt-3">
-                    <button
-                      className={clsx(
-                        'w-full p-2 border rounded border-gray hover:bg-gray-200',
-                        selectedAnswerIndex === index && 'bg-gray-700 text-white'
-                      )}
-                      onClick={() => handleAnswerClick(answer, index)}
-                    >
-                      {answer}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                onClick={nextQuestion}
-                pill
-                color="dark"
-                className="mt-5 mb-5 float-right"
-                disabled={selectedAnswerIndex === null && timeLeft !== null}
-              >
-                {activeQuestion === assessment.questions.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </div>
-          </div>
-        </div>
+      {!testStarted ? (
+        <StartPop onStart={startTest} /> // Show StartPop before the test
       ) : (
-        <div className="flex justify-center mt-4">
-          <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
-            <div className="p-10 w-full">
-              <p>Result</p>
-              <p>
-                Overall {(result.correctAnswers / assessment.questions.length) * 100}%
-              </p>
-              <p>
-                Total Question: <span className="font-bold">{assessment.questions.length}</span>
-              </p>
-              <p>
-                Correct Answer: <span className="font-bold">{result.correctAnswers}</span>
-              </p>
-              <p>
-                Wrong Answer: <span className="font-bold">{result.wrongAnswers}</span>
-              </p>
-              <div className='flex flex-row gap-2'>
-              <Button
-                pill
-                color="dark"
-                className="mt-5 mb-5 float-right"
-                onClick={resetQuiz}
-              >
-                Restart
-              </Button>
-              <Button
-                pill
-                color="dark"
-                className="mt-5 mb-5 float-right"
-             href={'/applicants/home'}
-              >
-              Back To Home
-              </Button>
+        <div>
+          <div className="flex-col justify-center text-center mt-10">
+            <p className="text-2xl">Test Assessment</p>
+            {showResult ? (
+              <p>Time Up</p>
+            ) : (
+              <div>
+                <p>
+                  Question: {activeQuestion + 1} / {assessment.questions.length}
+                </p>
+                <p>{timeLeft !== null ? `${timeLeft} seconds remaining for current question` : ''}</p>
               </div>
-      
-            </div>
+            )}
           </div>
+          {!showResult ? (
+            <div className="flex justify-center mt-4">
+              <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
+                <div className="p-10 w-full">
+                  <p style={{ userSelect: 'none' }}>Q: {assessment.questions[activeQuestion].questionName}</p>
+                  <ul className="pl-0" style={{ userSelect: 'none' }}>
+                    {assessment.questions[activeQuestion].answers.map((answer, index) => (
+                      <li key={index} className="mt-3">
+                        <button
+                          className={clsx(
+                            'w-full p-2 border rounded border-gray hover:bg-gray-200',
+                            selectedAnswerIndex === index && 'bg-gray-700 text-white'
+                          )}
+                          onClick={() => handleAnswerClick(answer, index)}
+                        >
+                          {answer}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={nextQuestion}
+                    pill
+                    color="dark"
+                    className="mt-5 mb-5 float-right"
+                    disabled={selectedAnswerIndex === null && timeLeft !== null}
+                  >
+                    {activeQuestion === assessment.questions.length - 1 ? 'Finish' : 'Next'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center mt-4">
+              <div className="w-full lg:max-w-[40%] rounded-md bg-white shadow">
+                <div className="p-10 w-full">
+                  <p className='font-bold text-2xl'>Result</p>
+                  <p>
+                    Overall Result Percentage {(result.correctAnswers / assessment.questions.length) * 100}%
+                  </p>
+                  <p>
+                    Total Question: <span className="font-bold">{assessment.questions.length}</span>
+                  </p>
+                  <p>
+                    Correct Answer: <span className="font-bold">{result.correctAnswers}</span>
+                  </p>
+                  <p>
+                    Wrong Answer: <span className="font-bold">{result.wrongAnswers}</span>
+                  </p>
+                  <div className='flex flex-row gap-2'>
+                    <Button
+                      pill
+                      color="dark"
+                      className="mt-5 mb-5 float-right"
+                      onClick={resetQuiz}
+                    >
+                      Restart Quiz
+                    </Button>
+                    <Button
+                      pill
+                      color="dark"
+                      className="mt-5 mb-5 float-right"
+                      href={'/applicants/home'}
+                    >
+                      Back To Home
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
