@@ -258,10 +258,16 @@ const MyAssessment = () => {
               <p>Total Questions: <span className="font-medium">{assessment.questions.length}</span></p>
               <p>Correct Answers: <span className="font-medium">{result.correctAnswers}</span></p>
               <p>Wrong Answers: <span className="font-medium">{result.wrongAnswers}</span></p>
-              <p>Your Score: <span className="font-medium">{result.score}</span></p>
+              <p>Your Score: <span className="font-medium">{result.score} %</span></p>
+              <div className='flex flex-row gap-2'>
               <Button onClick={resetQuiz} color="dark" pill className="mt-5">
-                Retake Quiz
+                Restart Quiz
               </Button>
+              <Button href={'/applicants/home'}  color="dark" pill className="mt-5">
+              Go Back to Home
+              </Button>
+              </div>
+          
             </div>
           </div>
         </div>
