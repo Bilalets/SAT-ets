@@ -6,11 +6,13 @@ export async function GET(req: Request) {
       select: {
         id: true,
         name: true,
+        isShown:true,
         // Select categories and within categories, select subcategories
         category: {
           select: {
             id: true,
             name: true,
+            isShown:true,
          
            
             // Select subcategories and within them, select subjects
@@ -18,7 +20,7 @@ export async function GET(req: Request) {
               select: {
                 id: true,
                 name: true,
-                
+                isShown:true,
                 // Select subjects and within them, select chapters
                 subject: {
                   select: {
