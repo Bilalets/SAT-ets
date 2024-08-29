@@ -169,7 +169,7 @@ console.log(userData)
             <div id="pdf-content"  className="bg-white p-6  shadow-lg w-[1000px] h-[700px] max-w-md">
               <div className="flex gap-5 items-center mb-4">
                 <div className="flex gap-4 mt-6 justify-center flex-row">
-                  <div className="flex ml-6"><Image className="ml-2 bg-contain" src={'/images/ETS.png'} width={80} height={80} alt="image"/></div>
+                  <div className="flex ml-6"><Image className="ml-2 " src={'/images/ETS.png'} width={80} height={80} alt="image"/></div>
                   
                   <div className="flex flex-col">
                   <h1 className="  text-center  font-bold mt-2">Eagle Testing Service </h1>
