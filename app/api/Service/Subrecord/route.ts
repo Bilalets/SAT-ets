@@ -23,7 +23,9 @@ export async function POST(req: Request) {
         createdAt:true,
         Totalquestion:true
       },
-      
+      orderBy: {
+        createdAt: 'desc', // Sort by createdAt in descending order
+      },
     });
 
     return Response.json(subjectrecord);
