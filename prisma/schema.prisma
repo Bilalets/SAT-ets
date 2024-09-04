@@ -60,6 +60,7 @@ model SaveRecord {
   Wrongawn      String
   subjectname   String
   Totalquestion String
+  catname       String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User?    @relation(fields: [userId], references: [id])
@@ -198,4 +199,15 @@ model UserApplication {
   registrationNumber Int
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model jobs {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  jobtitle       String
+  employmenttype String
+  startDate      DateTime
+  endDate        DateTime
+  jobOpenings    String
+  image          String
+  jobdesc        String
 }

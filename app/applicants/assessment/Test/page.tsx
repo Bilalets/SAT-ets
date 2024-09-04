@@ -90,7 +90,8 @@ const MyAssessment = () => {
         Wrongawn: result.wrongAnswers.toString(),
         Correctawn: result.correctAnswers.toString(),
         subjectname: new URLSearchParams(window.location.search).get("name"),
-        Totalquestion: assessment?.questions.length.toString()
+        Totalquestion: assessment?.questions.length.toString(),
+        catname:new URLSearchParams(window.location.search).get("catname")
       });
       toast.success('Quiz Result Saved Successfully');
     } catch (error) {
@@ -235,7 +236,7 @@ const MyAssessment = () => {
                 <div className="p-10 w-full">
                   <p style={{ userSelect: 'none' }}>Q: {assessment.questions[activeQuestion].questionName}</p>
                   <ul className="pl-0" style={{ userSelect: 'none' }}>
-                    {assessment.questions[activeQuestion].answers.map((answer, index) => (
+                    {assessment.questions[activeQuestion].answers?.map((answer, index) => (
                       <li key={index} className="mt-3">
                         <button
                           className={clsx(

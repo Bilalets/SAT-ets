@@ -24,7 +24,7 @@ interface Question {
 const Subjects: React.FC<SubcatId> = (props) => {
   const [getSubject, setSubjects] = useState<Subject[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<Subject | undefined>();
-  const [getQuestion, setQuestions] = useState<Question[]>([]);
+
 
   useEffect(() => {
     const fetchSub = async () => {
@@ -52,7 +52,7 @@ const Subjects: React.FC<SubcatId> = (props) => {
       <div className='flex flex-row gap-5'>
         <div>
           <select
-            value={selectedSubject?.id || ''}
+            value={selectedSubject?.id }
             onChange={handleSubChange}
             id="subjects"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -72,7 +72,8 @@ const Subjects: React.FC<SubcatId> = (props) => {
         </div>
       </div>
 
-<Qb/>
+
+<Qb id={selectedSubject?.id} />
       
     </>
   );

@@ -16,7 +16,7 @@ interface CategoryItem {
 const Category: React.FC<Service> = (props) => {
   const [getCat, setCat] = useState<CategoryItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
-console.log(selectedCategory)
+
   useEffect(() => {
     const fetchCategory = async () => {
       if (!props.id) return;

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 interface PageProps {
   name: string;
   id: string;
-  subcatName:string;
+  subcatName: string;
 }
 
 interface subs {
@@ -19,8 +19,8 @@ const Assessmentsubjects: React.FC<PageProps> = (props) => {
   const [inputValues, setInputValues] = useState<{ [key: string]: number }>({});
   const [total, settotal] = useState<number>();
   const [testDuration, setTestDuration] = useState<number>();
-
-
+  const [customDuration, setCustomDuration] = useState<number>(); // State for custom duration
+  const [isOtherSelected, setIsOtherSelected] = useState<boolean>(false); // State to track if "Other" is selected
 
   const calculateTotalPercentage = () => {
     let totalPercentage = 0;
@@ -32,7 +32,6 @@ const Assessmentsubjects: React.FC<PageProps> = (props) => {
 
   const fetchSubData = useCallback(async () => {
     try {
-      
       const response = await axios.post("/api/Service/Getsinglesubject", {
         subcategoryId: props.id,
       });
@@ -41,8 +40,6 @@ const Assessmentsubjects: React.FC<PageProps> = (props) => {
       }
     } catch (error) {
       toast.error("Error fetching Data");
-    } finally {
-     
     }
   }, [props.id]);
 
@@ -69,18 +66,18 @@ const Assessmentsubjects: React.FC<PageProps> = (props) => {
   const createassessment = async () => {
     const totalPercentage = calculateTotalPercentage();
     if (totalPercentage < 100) {
-toast.error("Please fill in percentages to total 100%.")
+      toast.error("Please fill in percentages to total 100%.");
     } else if (totalPercentage > 100) {
-toast.error("Total percentage should not exceed 100%.")
+      toast.error("Total percentage should not exceed 100%.");
     } else {
       try {
         await axios.post("/api/Makequiz", {
           Subcatname: props.subcatName,
           name: props.name,
           takes: assessmentData,
-          duration: testDuration,
+          duration: isOtherSelected ? customDuration : testDuration, 
           totalquestions: total,
-          Subcatid:props.id.toString()
+          Subcatid: props.id.toString()
         });
         toast.success("Assessment Created Successfully");
       } catch (error) {
@@ -88,6 +85,7 @@ toast.error("Total percentage should not exceed 100%.")
       }
     }
   };
+
   return (
     <>
       <div className="flex flex-row justify-center mt-5 gap-5">
@@ -107,23 +105,40 @@ toast.error("Total percentage should not exceed 100%.")
         <div>
           <form className="max-w-sm mx-auto ">
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Select Test Duration
+              Select Duration Per Question
             </label>
             <select
               id="test_duration"
-              value={testDuration}
-              onChange={(e) => setTestDuration(parseFloat(e.target.value))}
+              value={isOtherSelected ? "Other" : testDuration}
+              onChange={(e) => {
+                if (e.target.value === "Other") {
+                  setIsOtherSelected(true);
+                } else {
+                  setIsOtherSelected(false);
+                  setTestDuration(parseFloat(e.target.value));
+                }
+              }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="" disabled selected>
                 Choose Time Duration
               </option>
-              <option value="15">15 Secound</option>
-              <option value="30">30 Secound</option>
-              <option value="45">45 Secound</option>
+              <option value="15">15 Seconds</option>
+              <option value="30">30 Seconds</option>
+              <option value="45">45 Seconds</option>
               <option value="60">1 Minute</option>
-           
+              <option value="Other">Other</option>
             </select>
+            {isOtherSelected && (
+              <input
+                type="text"
+                value={customDuration || ""}
+                onChange={(e) => setCustomDuration(parseFloat(e.target.value))}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mt-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter Custom Duration (in seconds)"
+                required
+              />
+            )}
           </form>
         </div>
       </div>
@@ -140,7 +155,7 @@ toast.error("Total percentage should not exceed 100%.")
             </tr>
           </thead>
           <tbody>
-            {getsubjects?.map((subject,index) => (
+            {getsubjects?.map((subject, index) => (
               <tr
                 key={subject.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
@@ -149,7 +164,7 @@ toast.error("Total percentage should not exceed 100%.")
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                 ({index+1}) {subject.name} 
+                  ({index + 1}) {subject.name}
                 </th>
                 <td className="px-6 py-4">
                   <input
@@ -168,7 +183,7 @@ toast.error("Total percentage should not exceed 100%.")
         </table>
       </div>
 
-      <div className=" justify-center flex items-center mt-4">
+      <div className="justify-center flex items-center mt-4">
         <button
           onClick={createassessment}
           type="button"

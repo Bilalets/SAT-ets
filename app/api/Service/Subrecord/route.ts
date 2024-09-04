@@ -21,7 +21,8 @@ export async function POST(req: Request) {
         Wrongawn:true,
         subjectname:true,
         createdAt:true,
-        Totalquestion:true
+        Totalquestion:true,
+        catname:true
       },
       orderBy: {
         createdAt: 'desc', // Sort by createdAt in descending order

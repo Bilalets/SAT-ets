@@ -33,7 +33,7 @@ const LoginScreen: React.FC = () => {
       router.replace('/applicants/home');
     }
     if ((session?.user as any)?.role === 'admin') {
-      router.replace('/Admin/dashboard/assessment');
+      router.replace('/Admin/dashboard/main');
     }
   
 

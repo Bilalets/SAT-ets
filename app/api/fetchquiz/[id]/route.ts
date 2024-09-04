@@ -5,7 +5,10 @@ interface Takes {
   takes: Record<string, number>;
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = params.id;
 
@@ -26,15 +29,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     });
 
     if (!assessment) {
-      return new Response(
-        JSON.stringify({ error: "Assessment not found" }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Assessment not found" }), {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     }
 
     const { totalquestions, takes } = assessment;
@@ -50,74 +50,82 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       );
     }
 
-    // Type assertion for `takes`
     const questionsPerSubject: Record<string, number> = {};
-    Object.entries(takes as Prisma.JsonObject).forEach(([subjectId, percentTake]) => {
-      if (typeof percentTake === 'number') {
-        questionsPerSubject[subjectId] = Math.ceil((percentTake / 100) * totalquestions);
-      } else {
-        console.error(`Invalid takes value for subject ${subjectId}: ${percentTake}`);
-      }
-    });
-
-    // Track fetched question IDs to avoid duplication
-    const fetchedQuestionIds: Set<string> = new Set();
-
-    // Fetch random questions for each subject using the MongoDB $sample aggregation
-    const questions = await Promise.all(
-      Object.entries(questionsPerSubject).map(async ([subjectId, questionCount]) => {
-        const subjectQuestions = await prisma.subjectQuestions.aggregateRaw({
-          pipeline: [
-            { $match: { subjectsId: subjectId } },
-            { $match: { _id: { $nin: Array.from(fetchedQuestionIds) } } },
-            { $sample: { size: questionCount } }
-          ],
-        });
-
-        // Ensure subjectQuestions is an array and not null or undefined
-        if (!Array.isArray(subjectQuestions)) {
-          console.error(`No questions found for subject ${subjectId}`);
-          return [];
+    Object.entries(takes as Prisma.JsonObject).forEach(
+      ([subjectId, percentTake]) => {
+        if (typeof percentTake === "number") {
+          questionsPerSubject[subjectId] = Math.ceil(
+            (percentTake / 100) * totalquestions
+          );
+        } else {
+          console.error(
+            `Invalid takes value for subject ${subjectId}: ${percentTake}`
+          );
         }
+      }
+    );
 
-        // Add fetched question IDs to the set to prevent re-fetching
-        subjectQuestions.forEach((question: any) => fetchedQuestionIds.add(question._id));
+    // Function to fetch random questions
+    const fetchRandomQuestions = async (
+      subjectId: string,
+      questionCount: number
+    ) => {
+      const allQuestions = await prisma.subjectQuestions.findMany({
+        where: { subjectsId: subjectId },
+      });
 
-        return subjectQuestions.map((question: any) => ({
-          questionId: question._id,
-          questionName: question.questionName,
-          answers: question.awnsers,
-          correctAnswer: question.correctAwnser,
-          subjectsId: question.subjectsId!,
-        }));
-      })
+      const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random());
+      return shuffledQuestions.slice(0, questionCount);
+    };
+
+    const questions = await Promise.all(
+      Object.entries(questionsPerSubject).map(
+        async ([subjectId, questionCount]) => {
+          try {
+            const subjectQuestions = await fetchRandomQuestions(
+              subjectId,
+              questionCount
+            );
+
+            return subjectQuestions.map((question) => ({
+              questionId: question.id,
+              questionName: question.questionName,
+              answers: question.awnsers,
+              correctAnswer: question.correctAwnser,
+              subjectsId: question.subjectsId!,
+            }));
+          } catch (error) {
+            return [];
+          }
+        }
+      )
     );
 
     let flattenedQuestions = questions.flat();
 
-    // If fewer questions were fetched than required, fetch additional ones
     if (flattenedQuestions.length < totalquestions) {
-      const additionalQuestionsNeeded = totalquestions - flattenedQuestions.length;
-      const additionalQuestions = await prisma.subjectQuestions.aggregateRaw({
-        pipeline: [
-          { $match: { _id: { $nin: Array.from(fetchedQuestionIds) } } },
-          { $sample: { size: additionalQuestionsNeeded } }
-        ],
+      const additionalQuestionsNeeded =
+        totalquestions - flattenedQuestions.length;
+
+      const additionalQuestions = await prisma.subjectQuestions.findMany({
+        take: additionalQuestionsNeeded,
+        where: {
+          id: {
+            notIn: flattenedQuestions.map((q) => q.questionId),
+          },
+        },
       });
 
-      // Ensure additionalQuestions is an array and not null or undefined
-      if (Array.isArray(additionalQuestions)) {
-        flattenedQuestions = [
-          ...flattenedQuestions,
-          ...additionalQuestions.map((question: any) => ({
-            questionId: question._id,
-            questionName: question.questionName,
-            answers: question.awnsers,
-            correctAnswer: question.correctAwnser,
-            subjectsId: question.subjectsId!,
-          })),
-        ];
-      }
+      flattenedQuestions = [
+        ...flattenedQuestions,
+        ...additionalQuestions.map((question) => ({
+          questionId: question.id,
+          questionName: question.questionName,
+          answers: question.awnsers,
+          correctAnswer: question.correctAwnser,
+          subjectsId: question.subjectsId!,
+        })),
+      ];
     }
 
     return new Response(
@@ -134,25 +142,13 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       }
     );
   } catch (error) {
-    console.error(error);
-    return new Response(
-      JSON.stringify({ error: "Internal Server Error" }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    console.error("Internal Server Error:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
-
-// Utility function to shuffle array elements
-const shuffleArray = <T>(array: T[]): T[] => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};

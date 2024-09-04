@@ -16,6 +16,9 @@ import {
   BadgeCheck,
   Pencil,
   BookOpen,
+  UserSearch,
+  Briefcase,
+  SquarePen,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -105,12 +108,42 @@ icon={<BookOpen/>}>
               </MenuItem>
             </SubMenu>
             <hr />
+            <SubMenu
+              label="Jobs"
+              icon={<Briefcase />}
+              
+            >
+                  <hr />
+              <MenuItem
+                icon={  <SquarePen />}
+                component={<Link href="/Admin/dashboard/jobs/createjobs/" />}
+              >
+                Create Jobs
+              </MenuItem>
+              <hr />
+              
+              <MenuItem
+                icon={<Pen />}
+                component={<Link href="/Admin/dashboard/jobs/editjobs/" />}
+              >
+                Edit Jobs
+              </MenuItem>
+            </SubMenu>
+            <hr />
             <MenuItem
               icon={<BadgeCheck />}
               component={<Link href="/Admin/dashboard/payments" />}
              
             >
               Verify Payments
+            </MenuItem>
+            <hr />
+              <MenuItem
+              icon={ <UserSearch />}
+              component={<Link href="/Admin/dashboard/users" />}
+             
+            >
+              Users
             </MenuItem>
             <hr />
             <MenuItem
