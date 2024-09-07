@@ -103,17 +103,17 @@ const Data = () => {
   // Fetch user data from API
   const fetchAllData = async () => {
     try {
-      const [usersRes, servicesRes, assessmentRes,jobdata] = await Promise.all([
+      const [usersRes, servicesRes, assessmentRes] = await Promise.all([
         axios.get('/api/Alluser'),
         axios.get('/api/Everyservice'),
         axios.get('/api/Allassessment'),
-        axios.get('/api/Jobs/getjob'),
+     
       ]);
   
       setData(usersRes.data);
       setcount(servicesRes.data);
       setAssessmentData(assessmentRes.data);
-      setjoblength(jobdata.data)
+  
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -146,7 +146,7 @@ const Data = () => {
              Jobs Created
           </h5>
           <p className="text-xl font-bold text-gray-700 dark:text-gray-400 ">
-            {joblength.length}
+            {/* {joblength.length} */} 1
           </p>
         </Card>
         <Card className="w-auto text-center">
