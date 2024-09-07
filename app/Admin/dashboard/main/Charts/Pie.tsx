@@ -1,17 +1,36 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
+import axios from 'axios';
 
 const Pie: React.FC = () => {
-  // Create a ref to attach to the div element that will contain the chart
   const chartRef = useRef<HTMLDivElement | null>(null);
+  const [chartData, setChartData] = useState<{ value: number; name: string }[]>([]);
 
   useEffect(() => {
-    // Make sure the ref has a current value before initializing the chart
-    if (chartRef.current) {
-      // Initialize the ECharts instance using the ref's current DOM element
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/Bestassessment');
+        const apiData = response.data;
+
+        // Process API data to extract categories and subject names
+        const data = apiData.map((item: any) => ({
+          value: item.totalOccurrences,
+          name: `${item.catname} - ${item.subjectname}`,
+        }));
+
+        setChartData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (chartRef.current && chartData.length > 0) {
       const myChart = echarts.init(chartRef.current);
 
-      // Define the chart option
       const option: echarts.EChartsOption = {
         legend: {
           top: 'bottom',
@@ -28,7 +47,7 @@ const Pie: React.FC = () => {
         },
         series: [
           {
-            name: 'Nightingale Chart',
+            name: 'Top 10 Attempted Assessment',
             type: 'pie',
             radius: ['30%', '60%'], // Adjust radius for better fit
             center: ['50%', '50%'], // Center the pie chart
@@ -36,36 +55,22 @@ const Pie: React.FC = () => {
             itemStyle: {
               borderRadius: 8,
             },
-            data: [
-              { value: 40, name: 'LDC' },
-              { value: 38, name: 'UDC' },
-              { value: 32, name: 'Assisstant' },
-              { value: 30, name: 'Steno' },
-              { value: 28, name: 'Biology' },
-              { value: 26, name: 'MPT' },
-              { value: 22, name: 'Sub-Inspector' },
-              { value: 18, name: 'Director' },
-              { value: 18, name: 'Physics' },
-              { value: 19, name: 'English' },
-              
-            ],
+            data: chartData,
           },
         ],
       };
 
-      // Set the chart option
       myChart.setOption(option);
 
-      // Cleanup function to dispose of the chart instance on component unmount
       return () => {
         myChart.dispose();
       };
     }
-  }, []); // Dependency array is empty to ensure effect runs only once
+  }, [chartData]);
 
   return (
     <div className="bg-white w-[600px] h-auto p-5 border shadow-md rounded-lg">
-    <h1 className='text-center font-bold text-2xl '>Top 10 Attempted Assessment </h1>
+      <h1 className='text-center font-bold text-2xl'>Top 10 Attempted Assessment</h1>
       <div ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
     </div>
   );

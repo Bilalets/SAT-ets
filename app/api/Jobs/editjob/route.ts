@@ -3,10 +3,10 @@ import prisma from "../../../libs/prismadb";
 interface updatejobs {
   jobtitle: string;
   id: string;
-  imgae: string;
+  image: string;
   employmenttype: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   jobOpenings: string;
   jobdesc: string;
 }
@@ -21,7 +21,7 @@ export async function PUT(req: Request) {
       jobOpenings,
       startDate,
       endDate,
-      imgae,
+      image,
       employmenttype,
       id,
     } = body;
@@ -36,15 +36,13 @@ export async function PUT(req: Request) {
         jobOpenings,
         startDate,
         endDate,
-        imgae,
+        image,
         employmenttype,
       },
     });
 
     return Response.json([updatedjob]);
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message);
-    }
+    console.log(error)
   }
 }

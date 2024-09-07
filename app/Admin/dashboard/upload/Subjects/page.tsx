@@ -13,13 +13,6 @@ interface Subject {
   name: string;
 }
 
-interface Question {
-  id: string;
-  questionName: string;
-  awnsers: string[];  // Corrected the spelling
-  correctAwnser: string;  // Corrected the spelling
-  subjectsId: string;
-}
 
 const Subjects: React.FC<SubcatId> = (props) => {
   const [getSubject, setSubjects] = useState<Subject[]>([]);

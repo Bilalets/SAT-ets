@@ -26,7 +26,7 @@ const Cards = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
   const userEmail = getEmail();
-  console.log(userEmail);
+ 
   useEffect(() => {
     const fetchUserData = async () => {
       if (!userEmail) return;
@@ -208,14 +208,15 @@ const Cards = () => {
             >
               <div className="flex gap-8 mt-6  items-center ">
                 <div className="flex gap-4  justify-center flex-row">
-                  <div className="flex ">
-                    <Image
+                  <div className="flex ml-8 mt-5 text-xl ">
+                    {/* <Image
                       src={"/images/ETS.png"}
                       width={350}
                       height={250}
                       alt="image"
                       className="flex object-fill"
-                    />
+                    /> */}
+                    Logo Here
                   </div>
 
                   <div className="flex ml-[-30px] mt-6 w-full flex-col">
@@ -227,7 +228,7 @@ const Cards = () => {
                     </h2>
                     <h2 className=" text-center  font-bold">RESULT CARD</h2>
                     <h2 className="text-center font-bold">
-                      {getRecord.map((item) => item?.catname)}
+                      {selectedRecord.catname}
                     </h2>
                   </div>
                   <div>

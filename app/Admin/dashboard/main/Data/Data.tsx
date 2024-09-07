@@ -24,6 +24,32 @@ interface Category {
   categoryName: string;
   subcategories: Subcategory[];
 }
+interface Subject {
+  id: string;
+  name: string;
+  
+}
+
+interface Subcategory {
+  id: string;
+  name: string;
+  subject: Subject[];
+  isShown:boolean
+}
+
+interface Category {
+  id: string;
+  name: string;
+  subcategory: Subcategory[];
+  isShown:boolean
+}
+
+interface Test {
+  id: string;
+  name: string;
+  category: Category[];
+  isShown:boolean 
+}
 
 const Data = () => {
   // State hooks
@@ -31,7 +57,24 @@ const Data = () => {
   const [assessmentData, setAssessmentData] = useState<Data[]>([]);
   const [questionCount, setQuestionCount] = useState<Category[]>([]);
   const [currentDateTime, setCurrentDateTime] = useState<string>('');
-
+  const [joblength,setjoblength]=useState<any[]>([])
+  const [getcount,setcount]=useState<Test[]>([])
+  const totalCategoryLength = getcount?.reduce((total, item) => {
+    return total + (item.category?.length || 0);
+  }, 0);
+  const totalSubcategoryLength = getcount?.reduce((total, item) => {
+    return total + (item.category?.reduce((subTotal, category) => {
+      return subTotal + (category.subcategory?.length || 0);
+    }, 0) || 0);
+  }, 0);
+  const totalSubjectLength = getcount?.reduce((total, item) => {
+    return total + (item.category?.reduce((subTotal, category) => {
+      return subTotal + (category.subcategory?.reduce((subSubTotal, subcategory) => {
+        return subSubTotal + (subcategory.subject?.length || 0);
+      }, 0) || 0);
+    }, 0) || 0);
+  }, 0);
+  
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
@@ -48,46 +91,36 @@ const Data = () => {
     return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
   // Fetch question count data from API
-  const fetchQuestionCount = async () => {
-    try {
-      const res = await axios.get('/api/Subjectquesnumber');
-      setQuestionCount(res.data);
-    } catch (error) {
-      console.error('Error fetching question count:', error);
-    }
-  };
+  // const fetchQuestionCount = async () => {
+  //   try {
+  //     const res = await axios.get('/api/Subjectquesnumber');
+  //     setQuestionCount(res.data);
+  //   } catch (error) {
+  //     console.error('Error fetching question count:', error);
+  //   }
+  // };
 
   // Fetch user data from API
-  const fetchData = async () => {
+  const fetchAllData = async () => {
     try {
-      const res = await axios.get('/api/Alluser');
-      setData(res.data);
+      const [usersRes, servicesRes, assessmentRes,jobdata] = await Promise.all([
+        axios.get('/api/Alluser'),
+        axios.get('/api/Everyservice'),
+        axios.get('/api/Allassessment'),
+        axios.get('/api/Jobs/getjob'),
+      ]);
+  
+      setData(usersRes.data);
+      setcount(servicesRes.data);
+      setAssessmentData(assessmentRes.data);
+      setjoblength(jobdata.data)
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching data:', error);
     }
   };
-
-  // Fetch assessment data from API
-  const fetchAssessment = async () => {
-    try {
-      const res = await axios.get('/api/Allassessment');
-      setAssessmentData(res.data);
-    } catch (error) {
-      console.error('Error fetching assessment data:', error);
-    }
-  };
-
-  // Use effect hooks to call API functions
+  
   useEffect(() => {
-    fetchQuestionCount();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    fetchAssessment();
+    fetchAllData();
   }, []);
 
   return (
@@ -99,7 +132,7 @@ const Data = () => {
  </div>
    
 
-      <div className='flex flex-row p-4 justify-between '>
+      <div className='flex flex-row mt-4 p-4 gap-1 justify-between '>
         <Card className="w-auto text-center">
           <h5 className="text-2xl font-bold tracking-tight text-gray-900 ">
              Users
@@ -110,10 +143,10 @@ const Data = () => {
         </Card>
         <Card className="w-auto text-center">
           <h5 className="text-2xl font-bold tracking-tight text-gray-900 ">
-             Active Users
+             Jobs Created
           </h5>
           <p className="text-xl font-bold text-gray-700 dark:text-gray-400 ">
-            {data.length}
+            {joblength.length}
           </p>
         </Card>
         <Card className="w-auto text-center">
@@ -129,7 +162,7 @@ const Data = () => {
             Services
           </h5>
           <p className="text-xl font-bold text-gray-700 ">
-            {assessmentData.length}
+            {getcount.length}
           </p>
         </Card>
         <Card className="w-auto text-center">
@@ -137,7 +170,9 @@ const Data = () => {
            Categories
           </h5>
           <p className="text-xl font-bold text-gray-700 ">
-            {assessmentData.length}
+         {totalCategoryLength}
+
+
           </p>
         </Card>
         <Card className="w-auto text-center">
@@ -145,7 +180,7 @@ const Data = () => {
            Sub-Categories
           </h5>
           <p className="text-xl font-bold text-gray-700 ">
-            {assessmentData.length}
+            {totalSubcategoryLength}
           </p>
         </Card>
         <Card className="w-auto text-center">
@@ -153,7 +188,7 @@ const Data = () => {
            Subjects
           </h5>
           <p className="text-xl font-bold text-gray-700 ">
-            {assessmentData.length}
+            {totalSubjectLength}
           </p>
         </Card>
       </div>
@@ -186,7 +221,7 @@ const Data = () => {
           </Card>
         ))}
       </div> */}
-     <div className='flex flex-row gap-5'>
+     <div className='flex flex-row  gap-5'>
      <Bar/>
      <Pie/>
      </div>

@@ -2,7 +2,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-
+import { CSVLink, CSVDownload } from "react-csv";
+import { Spinner } from 'flowbite-react';
 interface SubcatId {
   id: string | undefined;
 }
@@ -19,6 +20,17 @@ interface Question {
   correctAwnser: string;
   subjectsId: string;
 }
+const headers = [
+
+  { label: "questionName", key: "questionName" },
+  { label: "awnsers[0]", key: "awnsers[0]" },
+  { label: "awnsers[1]", key: "awnsers[1]" },
+  { label: "awnsers[2]", key: "awnsers[2]" },
+  { label: "awnsers[3]", key: "awnsers[3]" },
+  { label: "correctAwnser", key: "correctAwnser" },
+
+];
+
 
 const Subjects: React.FC<SubcatId> = (props) => {
   const [getSubject, setSubjects] = useState<Subject[]>([]);
@@ -26,7 +38,8 @@ const Subjects: React.FC<SubcatId> = (props) => {
   const [getQuestion, setQuestions] = useState<Question[]>([]);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
-
+  const [loading,setloading]=useState(false)
+console.log(getQuestion)
   useEffect(() => {
     const fetchSub = async () => {
       if (!props.id) return;
@@ -44,8 +57,10 @@ const Subjects: React.FC<SubcatId> = (props) => {
   const fetchQB = async () => {
     if (!selectedSubject?.id) return;
     try {
+      setloading(false)
       const res = await axios.post('/api/FindQB', { subjectid: selectedSubject.id });
       setQuestions(res.data);
+      setloading(true)
     } catch (error) {
       console.error('Error fetching questions:', error);
     }
@@ -120,6 +135,7 @@ const Subjects: React.FC<SubcatId> = (props) => {
 
   return (
     <>
+
       <div className='flex flex-row gap-5'>
         <div>
           <select
@@ -146,8 +162,9 @@ const Subjects: React.FC<SubcatId> = (props) => {
           </button>
         </div>
       </div>
+     
       {getQuestion.length > 0 && (
-        <div className="absolute ml-[-700px] mt-20 border rounded-lg">
+        <div className="absolute ml-[-700px] mt-20  rounded-lg">
           <div className="overflow-scroll h-96 flex w-[1000px] shadow-md sm:rounded-lg">
             <table className="w-auto text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -164,6 +181,7 @@ const Subjects: React.FC<SubcatId> = (props) => {
               </thead>
               <tbody>
                 {getQuestion.map((item, index) => (
+               
                   <tr key={item.id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {index + 1}
@@ -224,8 +242,16 @@ const Subjects: React.FC<SubcatId> = (props) => {
               </tbody>
             </table>
           </div>
+          <button className='text-white mt-5 ml-96 bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"'>
+      <CSVLink data={getQuestion} headers={headers}>
+  Download CSV
+</CSVLink>
+      </button>
         </div>
       )}
+  
+  
+
     </>
   );
 };

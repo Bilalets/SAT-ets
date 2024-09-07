@@ -5,6 +5,10 @@ export async function GET(req: Request) {
     const allusers = await prisma.user.findMany({
       select: {
         id: true,
+        role:true,
+        name:true,
+      
+        createdAt:true
        
        
       },

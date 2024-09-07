@@ -27,12 +27,7 @@ export async function GET(req: Request) {
                     id: true,
                     name: true,
                     // Select chapters associated with the subject
-                    chapters: {
-                      select: {
-                        id: true,
-                        name: true,
-                      },
-                    },
+                  
                   },
                 },
               },

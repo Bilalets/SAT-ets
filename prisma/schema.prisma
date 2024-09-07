@@ -205,8 +205,8 @@ model jobs {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   jobtitle       String
   employmenttype String
-  startDate      DateTime
-  endDate        DateTime
+  startDate      String
+  endDate        String
   jobOpenings    String
   image          String
   jobdesc        String
