@@ -41,6 +41,7 @@ model User {
   password          String
   role              Role
   userpicture       String?
+  status            Boolean      @default(true) // New status field
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   saverecords       SaveRecord[]
@@ -202,7 +203,7 @@ model UserApplication {
 }
 
 model jobs {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
   jobtitle       String
   employmenttype String
   startDate      String

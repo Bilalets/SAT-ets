@@ -26,10 +26,17 @@ export const authOptions: AuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        if (!user.emailVerified) {
-          throw new Error('Please verify your email first');
+        // Check if the user is active
+        if (!user.status) {
+          throw new Error('Account is inactive'); // Error message for inactive accounts
         }
 
+        // Check if the email is verified
+        if (!user.emailVerified) {
+          throw new Error('Please verify your email first.');
+        }
+
+        // Check if the password is correct
         const isCorrectPassword = await bcrypt.compare(credentials.password, user.password);
         if (!isCorrectPassword) {
           throw new Error('Invalid credentials');
@@ -42,14 +49,15 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-      
         token.role = (user as any).role; // Ensure role is set in the JWT token
+        token.status = (user as any).status; // Include status in JWT token
       }
       return token;
     },
     async session({ session, token }) {
       if (token && token.role) {
         (session.user as any).role = token.role; // Ensure role is set in the session
+        (session.user as any).status = token.status;  // Ensure status is set in the session
       }
       return session;
     },
@@ -63,5 +71,3 @@ export const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-export const revalidate = 0
-export const fetchCache = 'force-no-store'

@@ -80,8 +80,8 @@ const closeModal = () => {
               <p className="text-gray-700">Vacancy:{item.jobOpenings}</p>
               <p className="text-gray-700">Job Type:{item.employmenttype}</p>
               <div className="flex flex-row gap-3 text-gray-700">
-              <div>Start Date: {item.startDate.slice(0,-14)}</div>
-              <div>End Date: {item.endDate.slice(0,-14)}</div>
+              {/* <div>Start Date: {item.startDate.slice(0,-14)}</div>
+              <div>End Date: {item.endDate.slice(0,-14)}</div> */}
             </div>
             </div>
           

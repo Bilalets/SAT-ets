@@ -7,7 +7,7 @@ export async function GET(req: Request) {
         id: true,
         role:true,
         name:true,
-      
+      status:true,
         createdAt:true
        
        

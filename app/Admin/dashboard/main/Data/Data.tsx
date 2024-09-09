@@ -125,10 +125,10 @@ const Data = () => {
 
   return (
     <>
- <div className=' bg-white font-bold text-xl flex justify-between p-5 items-center   border h-24 mt-[-57px] ml-[-7px] shadow-sm w-auto flex-row'>
+ <div className=' bg-white font-bold text-2xl flex justify-center p-5 items-center   border h-24 mt-[-57px] ml-[-7px] shadow-sm w-auto flex-row'>
 <div>Dashboard</div>
-<div>Eagle Testing Service</div>
-<div>{currentDateTime}</div>
+{/* <div>Eagle Testing Service</div> */}
+{/* <div>{currentDateTime}</div> */}
  </div>
    
 

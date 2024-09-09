@@ -10,7 +10,7 @@ import { AiOutlineLoading } from 'react-icons/ai';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {setEmail } from '../libs/myeail';
+import { setEmail } from '../libs/myeail';
 
 interface FormValues {
   email: string;
@@ -35,7 +35,6 @@ const LoginScreen: React.FC = () => {
     if ((session?.user as any)?.role === 'admin') {
       router.replace('/Admin/dashboard/main');
     }
-  
 
     if (session?.user?.email) {
       if (session.user.email === 'admin123@gmail.com') {
@@ -53,14 +52,15 @@ const LoginScreen: React.FC = () => {
     })
       .then(async (callback) => {
         if (callback?.error) {
-          const errorMessage =
-            callback.error === 'Please verify your email first'
-              ? 'Please verify your email first'
-              : 'Invalid username or password';
+          // Check if the error is due to user being inactive
+          const errorMessage = callback.error === (session?.user as any)?.status===false
+            ? 'Your account has been deactivated. Please contact support.'
+            : callback.error === 'Please verify your email first'
+            ? 'Please verify your email first'
+            : 'Invalid username or password';
+            
           toast.error(errorMessage);
           setLoading(false);
-         
-          
         } else if (callback?.ok && !callback.error) {
           // Wait for a short duration to allow the session to update
           await new Promise((resolve) => setTimeout(resolve, 1000));
