@@ -48,21 +48,20 @@ const LoginScreen: React.FC = () => {
 
     signIn('credentials', {
       ...data,
-      redirect: false, // Handle redirection manually
+      redirect: false,
     })
       .then(async (callback) => {
         if (callback?.error) {
-          // Check if the error is due to user being inactive
-          const errorMessage = callback.error === (session?.user as any)?.status===false
-            ? 'Your account has been deactivated. Please contact support.'
-            : callback.error === 'Please verify your email first'
-            ? 'Please verify your email first'
-            : 'Invalid username or password';
-            
+          const errorMessage =
+            callback.error === (session?.user as any)?.status === false
+              ? 'Your account has been deactivated. Please contact support.'
+              : callback.error === 'Please verify your email first'
+              ? 'Please verify your email first'
+              : 'Invalid username or password';
+
           toast.error(errorMessage);
           setLoading(false);
         } else if (callback?.ok && !callback.error) {
-          // Wait for a short duration to allow the session to update
           await new Promise((resolve) => setTimeout(resolve, 1000));
           setEmail(data.email);
           await getSession();
@@ -73,81 +72,58 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className='text-center mt-7'>
-        <div className='flex justify-center items-center'>
-          <Image src={'/images/ETS.png'} width={250} height={250} alt='pic' />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 overflow-hidden">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-8 rounded shadow-lg max-w-md w-full">
+        <div className="text-center mb-8">
+          <Image src={'/images/ETS.png'} width={250} height={250} alt="pic" className="mx-auto" />
+          <h1 className="text-2xl font-semibold mt-[-50px]">WELCOME TO E-PORTAL</h1>
         </div>
-        <h1 className='text-3xl font-semibold mt-[-50px]'>
-          WELCOME TO E-PORTAL
-        </h1>
-      </div>
-      <div className="flex items-center mt-[-120px] justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded shadow-lg max-w-md w-full">
-          <h2 className="text-2xl font-semibold mb-4">Login</h2>
-          <div className="mb-4">
-            <Label htmlFor="email" value="Email" />
-            <TextInput
-              {...register('email', { required: 'Email is required' })}
-              type="email"
-              id="email"
-              shadow
-              icon={HiOutlineUserCircle}
-            />
-            {errors.email && (
-              <span className="text-sm text-red-500">
-                {errors.email.message}
-              </span>
-            )}
-          </div>
-          <div className="mb-4">
-            <Label htmlFor="password" value="Password" />
-            <TextInput
-              {...register('password', { required: 'Password is required' })}
-              type="password"
-              id="password"
-              icon={HiOutlineLockOpen}
-            />
-            {errors.password && (
-              <span className="text-sm text-red-500">
-                {errors.password.message}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-end">
-            {loading ? (
-              <Button
-                className="w-full bg-black text-white rounded hover:bg-gray-800 focus:outline-none"
-                isProcessing
-                processingSpinner={
-                  <AiOutlineLoading className="h-6 w-6 animate-spin" />
-                }
-              >
-                Please wait.....
-              </Button>
-            ) : (
-              <button
-                type="submit"
-                className="w-full px-6 py-2 bg-black text-white rounded hover:bg-gray-800 focus:outline-none"
-              >
-                Login
-              </button>
-            )}
-          </div>
-          <div className="flex justify-between mt-10">
-            <Link href={'/Forgetpassword'}>
-              <p className="text-sm cursor-pointer text-sky-400">Forgot password?</p>
-            </Link>
-            <p className="text-sm">
-              Not a member yet?{' '}
-              <span className="font-bold text-sm cursor-pointer text-sky-400">
-                <Link href={'/signup'}>Sign up</Link>
-              </span>
-            </p>
-          </div>
+        <h2 className="text-2xl font-semibold  text-center">Login</h2>
+        <div className="mb-4">
+          <Label htmlFor="email" value="Email" />
+          <TextInput
+            {...register('email', { required: 'Email is required' })}
+            type="email"
+            id="email"
+            shadow
+            icon={HiOutlineUserCircle}
+          />
+          {errors.email && <span className="text-sm text-red-500">{errors.email.message}</span>}
         </div>
-      </div>
-    </form>
+        <div className="mb-4">
+          <Label htmlFor="password" value="Password" />
+          <TextInput
+            {...register('password', { required: 'Password is required' })}
+            type="password"
+            id="password"
+            icon={HiOutlineLockOpen}
+          />
+          {errors.password && <span className="text-sm text-red-500">{errors.password.message}</span>}
+        </div>
+        <div className="flex justify-end">
+          {loading ? (
+            <Button className="w-full bg-black text-white rounded" isProcessing processingSpinner={<AiOutlineLoading className="h-6 w-6 animate-spin" />}>
+              Please wait...
+            </Button>
+          ) : (
+            <button type="submit" className="w-full px-6 py-2 bg-black text-white rounded hover:bg-gray-800 focus:outline-none">
+              Login
+            </button>
+          )}
+        </div>
+        <div className="flex justify-between mt-6">
+          <Link href="/Forgetpassword">
+            <p className="text-sm cursor-pointer text-sky-400">Forgot password?</p>
+          </Link>
+          <p className="text-sm">
+            Not a member yet?{' '}
+            <span className="font-bold text-sm cursor-pointer text-sky-400">
+              <Link href="/signup">Sign up</Link>
+            </span>
+          </p>
+        </div>
+      </form>
+    </div>
   );
 };
 

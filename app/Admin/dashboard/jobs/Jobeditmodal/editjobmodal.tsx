@@ -37,12 +37,12 @@ const EditJobModal: React.FC<id> = ({ id, closeModal }) => {
         employmenttype: EmploymentTypeFull || EmploymentTypeP || EmploymentTypeC || EmploymentTypeI,
         image: image,
         jobOpenings: jobopening,
-        startDate: formattedStartDate||null,
-        endDate: formatedEndDate||null,
+        startDate: formattedStartDate||undefined,
+        endDate: formatedEndDate||undefined,
         jobdesc: jobdesc,
       });
       toast.success('Job Updated Successfully');
-      
+      closeModalHandler()
     } catch (error) {
       toast.error('Error Updating Job');
       console.log(error);
