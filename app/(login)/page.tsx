@@ -76,9 +76,9 @@ const LoginScreen: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className='text-center mt-7'>
         <div className='flex justify-center items-center'>
-          <Image src={'/images/ETS.png'} width={150} height={150} alt='pic' />
+          <Image src={'/images/ETS.png'} width={250} height={250} alt='pic' />
         </div>
-        <h1 className='text-3xl font-semibold mt-9'>
+        <h1 className='text-3xl font-semibold mt-[-50px]'>
           WELCOME TO E-PORTAL
         </h1>
       </div>

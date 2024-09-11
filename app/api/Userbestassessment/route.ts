@@ -1,22 +1,28 @@
-// pages/api/top-ten-most-saved.ts
-
-import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../libs/prismadb'
-
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+interface userid{
+    userId:string
+}
+export async function POST(req: Request) {
   try {
-  
+    const body = await req.json() as userid;
+    const {userId} = body;
+    if(!userId){
+        return Response.json('no id')
+    }
     const aggregatedData = await prisma.saveRecord.groupBy({
       by: ['catname', 'subjectname'],
       _count: {
         id: true, 
+      },
+      where:{
+        userId:userId
       },
       orderBy: {
         _count: {
           id: 'desc',
         },
       },
-      take: 10, 
+      take: 5, 
     });
 
    

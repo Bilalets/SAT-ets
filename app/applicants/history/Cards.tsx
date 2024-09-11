@@ -44,7 +44,7 @@ const Cards = () => {
 
     fetchUserData();
   }, [userEmail]);
-  console.log(userData);
+  
   useEffect(() => {
     const fetchResult = async () => {
       try {

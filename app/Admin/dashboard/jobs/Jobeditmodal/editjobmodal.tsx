@@ -37,8 +37,8 @@ const EditJobModal: React.FC<id> = ({ id, closeModal }) => {
         employmenttype: EmploymentTypeFull || EmploymentTypeP || EmploymentTypeC || EmploymentTypeI,
         image: image,
         jobOpenings: jobopening,
-        startDate: formattedStartDate||undefined,
-        endDate: formatedEndDate||undefined,
+        startDate: formattedStartDate||null,
+        endDate: formatedEndDate||null,
         jobdesc: jobdesc,
       });
       toast.success('Job Updated Successfully');

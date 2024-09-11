@@ -378,7 +378,7 @@ const Dashboard = () => {
   <div className="w-full sm:w-[830px] h-[400px]  sm:ml-8 mt-6 sm:mt-0">
     <div className="bg-white border border-gray-200 rounded-lg shadow  lg:ml-7 h-full">
       <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white text-center mt-7">
-        Subject Performance
+        Top 5 Attempted Assessment
       </h5>
       <div className="h-full">
         <DynamicBargraph />
