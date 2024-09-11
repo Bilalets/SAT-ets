@@ -45,32 +45,40 @@ const LoginScreen: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-
-    signIn('credentials', {
-      ...data,
-      redirect: false,
-    })
-      .then(async (callback) => {
-        if (callback?.error) {
-          const errorMessage =
-            callback.error === (session?.user as any)?.status === false
-              ? 'Your account has been deactivated. Please contact support.'
-              : callback.error === 'Please verify your email first'
-              ? 'Please verify your email first'
-              : 'Invalid username or password';
-
-          toast.error(errorMessage);
-          setLoading(false);
-        } else if (callback?.ok && !callback.error) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          setEmail(data.email);
-          await getSession();
-          router.replace('/applicants/home');
-        }
-      })
-      .finally(() => setLoading(false));
+  
+    try {
+      const callback = await signIn('credentials', {
+        ...data,
+        redirect: false,
+      });
+  
+      // Check and log the callback for debugging
+    
+  
+      if (callback?.error) {
+        // Use the exact error message from the callback response
+        const errorMessage = callback.error || 'An unexpected error occurred. Please try again.';
+  
+        // Log the error message for debugging
+      
+  
+        // Display the error message using toast
+        toast.error(errorMessage);
+      } else if (callback?.ok && !callback.error) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setEmail(data.email);
+        await getSession();
+        router.replace('/applicants/home');
+      }
+    } catch (error) {
+      
+      toast.error('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 overflow-hidden">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-8 rounded shadow-lg max-w-md w-full">

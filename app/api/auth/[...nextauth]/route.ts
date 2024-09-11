@@ -28,7 +28,7 @@ export const authOptions: AuthOptions = {
 
         // Check if the user is active
         if (!user.status) {
-          throw new Error('Account is inactive'); // Error message for inactive accounts
+          throw new Error('Account has been de-activated by the admin contact support'); // Error message for inactive accounts
         }
 
         // Check if the email is verified
