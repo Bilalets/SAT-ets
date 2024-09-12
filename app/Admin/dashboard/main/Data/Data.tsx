@@ -55,8 +55,6 @@ const Data = () => {
   // State hooks
   const [data, setData] = useState<Data[]>([]);
   const [assessmentData, setAssessmentData] = useState<Data[]>([]);
-  const [questionCount, setQuestionCount] = useState<Category[]>([]);
-  const [currentDateTime, setCurrentDateTime] = useState<string>('');
   const [joblength,setjoblength]=useState<any[]>([])
   const [getcount,setcount]=useState<Test[]>([])
   const totalCategoryLength = getcount?.reduce((total, item) => {
@@ -75,21 +73,21 @@ const Data = () => {
     }, 0) || 0);
   }, 0);
   
-  useEffect(() => {
-    const updateDateTime = () => {
-      const now = new Date();
-      const day = now.toLocaleDateString('en-US', { weekday: 'long' });
-      const date = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // useEffect(() => {
+  //   const updateDateTime = () => {
+  //     const now = new Date();
+  //     const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+  //     const date = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  //     const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-      setCurrentDateTime(`${day}, ${date} - ${time}`);
-    };
+  //     setCurrentDateTime(`${day}, ${date} - ${time}`);
+  //   };
 
-    updateDateTime(); // Initial call
-    const intervalId = setInterval(updateDateTime, 1000); // Update every second
+  //   updateDateTime(); // Initial call
+  //   const intervalId = setInterval(updateDateTime, 1000); // Update every second
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []);
+  //   return () => clearInterval(intervalId); // Cleanup on component unmount
+  // }, []);
   // Fetch question count data from API
   // const fetchQuestionCount = async () => {
   //   try {
@@ -121,7 +119,16 @@ const Data = () => {
   
   useEffect(() => {
     fetchAllData();
+    fetchjobs()
   }, []);
+const fetchjobs=async()=>{
+  try {
+    const res=await axios.get('/api/Jobs/getjob')
+    setjoblength(res.data)
+  } catch (error) {
+    console.log(error)
+  }
+}
 
   return (
     <>
@@ -146,7 +153,7 @@ const Data = () => {
              Jobs Created
           </h5>
           <p className="text-xl font-bold text-gray-700 dark:text-gray-400 ">
-            {/* {joblength.length} */} 1
+           {joblength.length}
           </p>
         </Card>
         <Card className="w-auto text-center">
